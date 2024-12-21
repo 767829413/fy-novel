@@ -5,6 +5,7 @@ import (
 	"fy-novel/internal/config"
 	"fy-novel/internal/model"
 	"fy-novel/internal/parse"
+	"fy-novel/internal/progress"
 	chapterTool "fy-novel/internal/tools/chapter"
 	mergeTool "fy-novel/internal/tools/merge"
 	"os"
@@ -71,8 +72,8 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 		threads = cpuNum * 2
 	}
 	semaphore := make(chan struct{}, threads)
-	var nowCatalogsCount int32 = int32(len(catalogs))
-	// process.SetSaveProgress(res.Url, &process.Pressing{All: nowCatalogsCount})
+	var nowCatalogsCount = int32(0)
+	progress.InitTask(res.Url, int64(len(catalogs)))
 	for _, chapter := range catalogs {
 		wg.Add(1)
 		go func(chapter *model.Chapter, bookDir string) {
@@ -82,7 +83,8 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 			// 下载逻辑
 			parse.NewChapterParser(conf.Base.SourceID).Parse(chapter, res, book, bookDir)
 			chapterTool.CreateFileForChapter(chapter, bookDir)
-			atomic.AddInt32(&nowCatalogsCount, -1)
+			atomic.AddInt32(&nowCatalogsCount, 1)
+			progress.UpdateProgress(res.Url, int64(nowCatalogsCount))
 		}(
 			chapter,
 			bookDir,
