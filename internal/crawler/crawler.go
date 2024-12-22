@@ -5,12 +5,12 @@ import (
 	"fy-novel/internal/config"
 	"fy-novel/internal/model"
 	"fy-novel/internal/parse"
-	"fy-novel/internal/progress"
 	chapterTool "fy-novel/internal/tools/chapter"
+	concurrencyTool "fy-novel/internal/tools/concurrency"
 	mergeTool "fy-novel/internal/tools/merge"
+	progressTool "fy-novel/internal/tools/progress"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -65,15 +65,12 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 
 	startTime := time.Now()
 	// 解析下载内容
+	// 限制并发处理
 	var wg sync.WaitGroup
-	cpuNum := runtime.NumCPU()
-	threads := conf.Crawl.Threads
-	if threads == -1 {
-		threads = cpuNum * 2
-	}
+	threads := concurrencyTool.GetConcurrencyNum(conf.Crawl.Threads)
 	semaphore := make(chan struct{}, threads)
 	var nowCatalogsCount = int32(0)
-	progress.InitTask(res.Url, int64(len(catalogs)))
+	progressTool.InitTask(res.Url, int64(len(catalogs)))
 	for _, chapter := range catalogs {
 		wg.Add(1)
 		go func(chapter *model.Chapter, bookDir string) {
@@ -84,7 +81,7 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 			parse.NewChapterParser(conf.Base.SourceID).Parse(chapter, res, book, bookDir)
 			chapterTool.CreateFileForChapter(chapter, bookDir)
 			atomic.AddInt32(&nowCatalogsCount, 1)
-			progress.UpdateProgress(res.Url, int64(nowCatalogsCount))
+			progressTool.UpdateProgress(res.Url, int64(nowCatalogsCount))
 		}(
 			chapter,
 			bookDir,

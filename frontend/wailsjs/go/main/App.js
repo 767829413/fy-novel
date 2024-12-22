@@ -14,8 +14,8 @@ export function GetConfig() {
   return window['go']['main']['App']['GetConfig']();
 }
 
-export function GetDownloadProgress() {
-  return window['go']['main']['App']['GetDownloadProgress']();
+export function GetDownloadProgress(arg1) {
+  return window['go']['main']['App']['GetDownloadProgress'](arg1);
 }
 
 export function GetUsageInfo() {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fy-novel/internal/functions"
 	"fy-novel/internal/model"
+	progressTool "fy-novel/internal/tools/progress"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -12,6 +13,7 @@ import (
 // App struct
 type App struct {
 	ctx          context.Context
+	log          *logrus.Logger
 	checkUpdater *functions.CheckUpdater
 	downloader   *functions.Downloader
 	getConf      *functions.GetConf
@@ -39,14 +41,25 @@ func (a *App) startup(ctx context.Context) {
 	a.downloader = functions.NewDownload(log)
 	a.getConf = functions.NewGetConf(log)
 	a.getHint = functions.NewGetHint(log)
+	a.log = log
 }
 
-func (a *App) SerachNovel(name string) ([]*model.SearchResult, error) {
-	return a.downloader.Serach(name)
+func (a *App) SerachNovel(name string) []*model.SearchResult {
+	res, err := a.downloader.Serach(name)
+	if err != nil {
+		a.log.Errorf("app SerachNovel error: %v", err)
+		return nil
+	}
+	return res
 }
 
-func (a *App) DownLoadNovel(sr *model.SearchResult) (*model.CrawlResult, error) {
-	return a.downloader.DownLoad(sr)
+func (a *App) DownLoadNovel(sr *model.SearchResult) *model.CrawlResult {
+	res, err := a.downloader.DownLoad(sr)
+	if err != nil {
+		a.log.Errorf("app DownLoadNovel error: %v", err)
+		return nil
+	}
+	return res
 }
 
 func (a *App) CheckUpdate() string {
@@ -57,10 +70,24 @@ func (a *App) GetUsageInfo() []string {
 	return a.getHint.GetUsageInfo()
 }
 
-func (a *App) GetConfig() (string, error) {
-	return a.getConf.GetConfigString()
+func (a *App) GetConfig() *model.GetConfigResult {
+	res := &model.GetConfigResult{}
+	confStr, err := a.getConf.GetConfigString()
+	if err != nil {
+		res.Error = err.Error()
+	} else {
+		res.Config = confStr
+	}
+	return res
 }
 
-func (a *App) GetDownloadProgress() int {
-	return 0
+func (a *App) GetDownloadProgress(sr *model.SearchResult) *model.ProgressResult {
+	res := &model.ProgressResult{}
+	completed, total, exists := progressTool.GetProgress(sr.Url)
+	if exists {
+		res.Exists = exists
+		res.Completed = int(completed)
+		res.Total = int(total)
+	}
+	return res
 }

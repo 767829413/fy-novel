@@ -4,31 +4,64 @@ import (
 	"sync"
 )
 
-var progressMap sync.Map
+var (
+	progressTracker *ProgressTracker
+	once            sync.Once
+)
 
-// Progress 结构体用于跟踪任务进度
-type progress struct {
-	total   int64
-	current int64
-	mu      sync.RWMutex
+type ProgressTracker struct {
+	tasks map[string]*TaskProgress
+	mu    sync.RWMutex
 }
 
-func InitProgress(uniqueKe string, total int64) {
-	progressMap.Store(uniqueKe, &progress{total: total})
+type TaskProgress struct {
+	Total     int64
+	Completed int64
+	mu        sync.RWMutex
 }
 
-func SetProgress(uniqueKe string, current int64) {
-	if v, ok := progressMap.Load(uniqueKe); ok {
-		p := v.(*progress)
-		p.mu.Lock()
-		p.current = current
-		p.mu.Unlock()
+func init() {
+	once.Do(func() {
+		progressTracker = &ProgressTracker{
+			tasks: make(map[string]*TaskProgress),
+		}
+	})
+}
+
+// InitTask 初始化一个新的任务进度
+func InitTask(taskID string, total int64) {
+	progressTracker.mu.Lock()
+	defer progressTracker.mu.Unlock()
+	progressTracker.tasks[taskID] = &TaskProgress{Total: total}
+}
+
+// UpdateProgress 更新指定任务的进度
+func UpdateProgress(taskID string, completed int64) {
+	progressTracker.mu.RLock()
+	task, exists := progressTracker.tasks[taskID]
+	progressTracker.mu.RUnlock()
+
+	if exists {
+		task.mu.Lock()
+		task.Completed += completed
+		task.mu.Unlock()
 	}
 }
 
-func GetProgress(uniqueKe string) float64 {
-	if v, ok := progressMap.Load(uniqueKe); ok {
-		return float64(v.(*progress).total) / float64(v.(*progress).total)
+// GetProgress 获取指定任务的进度
+func GetProgress(taskID string) (int64, int64, bool) {
+	progressTracker.mu.RLock()
+	task, exists := progressTracker.tasks[taskID]
+	progressTracker.mu.RUnlock()
+
+	if !exists {
+		return 0, 0, false
 	}
-	return 0
+
+	task.mu.RLock()
+	completed := task.Completed
+	total := task.Total
+	task.mu.RUnlock()
+
+	return completed, total, true
 }

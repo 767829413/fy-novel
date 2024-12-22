@@ -14,6 +14,36 @@ export namespace model {
 	        this.TakeTime = source["TakeTime"];
 	    }
 	}
+	export class GetConfigResult {
+	    Config: string;
+	    Error: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new GetConfigResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Config = source["Config"];
+	        this.Error = source["Error"];
+	    }
+	}
+	export class ProgressResult {
+	    Exists: boolean;
+	    Completed: number;
+	    Total: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ProgressResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Exists = source["Exists"];
+	        this.Completed = source["Completed"];
+	        this.Total = source["Total"];
+	    }
+	}
 	export class SearchResult {
 	    url: string;
 	    bookName: string;

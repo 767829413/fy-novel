@@ -6,9 +6,9 @@ export function CheckUpdate():Promise<string>;
 
 export function DownLoadNovel(arg1:model.SearchResult):Promise<model.CrawlResult>;
 
-export function GetConfig():Promise<string>;
+export function GetConfig():Promise<model.GetConfigResult>;
 
-export function GetDownloadProgress():Promise<number>;
+export function GetDownloadProgress(arg1:model.SearchResult):Promise<model.ProgressResult>;
 
 export function GetUsageInfo():Promise<Array<string>>;
 
