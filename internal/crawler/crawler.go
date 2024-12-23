@@ -70,7 +70,8 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 	threads := concurrencyTool.GetConcurrencyNum(conf.Crawl.Threads)
 	semaphore := make(chan struct{}, threads)
 	var nowCatalogsCount = int32(0)
-	progressTool.InitTask(res.Url, int64(len(catalogs)))
+	// 总的完成任务数 = 抓取文章数量 + 1(合成任务)
+	progressTool.InitTask(res.Url, int64(len(catalogs)+1))
 	for _, chapter := range catalogs {
 		wg.Add(1)
 		go func(chapter *model.Chapter, bookDir string) {
@@ -80,8 +81,10 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 			// 下载逻辑
 			parse.NewChapterParser(conf.Base.SourceID).Parse(chapter, res, book, bookDir)
 			chapterTool.CreateFileForChapter(chapter, bookDir)
-			atomic.AddInt32(&nowCatalogsCount, 1)
-			progressTool.UpdateProgress(res.Url, int64(nowCatalogsCount))
+			defer func() {
+				atomic.AddInt32(&nowCatalogsCount, 1)
+				progressTool.UpdateProgress(res.Url, int64(nowCatalogsCount))
+			}()
 		}(
 			chapter,
 			bookDir,
@@ -94,6 +97,12 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 	if err != nil {
 		return nil, err
 	}
+	// 任务完成
+	defer func() {
+		atomic.AddInt32(&nowCatalogsCount, 1)
+		progressTool.UpdateProgress(res.Url, int64(nowCatalogsCount))
+	}()
+
 	return &model.CrawlResult{
 		OutputPath: outputPath,
 		TakeTime:   int64(time.Since(startTime).Seconds()),

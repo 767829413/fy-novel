@@ -65,8 +65,14 @@ const DownloadNovel: React.FC = () => {
 
         progressIntervalRef.current = window.setInterval(async () => {
             try {
-                // const progress = await GetDownloadProgress(record);
-                // setDownloadProgress(progress);
+                const progress = await GetDownloadProgress(record);
+                if (progress.Exists) {
+                    const percentage = progress.Total > 0 
+                    ? Math.min(100, Math.max(0, Math.floor((progress.Completed / progress.Total) * 100)))
+                    : 0;
+                setDownloadProgress(percentage);
+                } 
+                
             } catch (error) {
                 console.error("获取下载进度时出错:", error);
             }

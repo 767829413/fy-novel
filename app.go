@@ -62,22 +62,17 @@ func (a *App) DownLoadNovel(sr *model.SearchResult) *model.CrawlResult {
 	return res
 }
 
-func (a *App) CheckUpdate() string {
+func (a *App) GetUpdateInfo() *model.GetUpdateInfoResult {
 	return a.checkUpdater.CheckUpdate()
 }
 
-func (a *App) GetUsageInfo() []string {
+func (a *App) GetUsageInfo() *model.GetUsageInfoResult {
 	return a.getHint.GetUsageInfo()
 }
 
 func (a *App) GetConfig() *model.GetConfigResult {
 	res := &model.GetConfigResult{}
-	confStr, err := a.getConf.GetConfigString()
-	if err != nil {
-		res.Error = err.Error()
-	} else {
-		res.Config = confStr
-	}
+	res.Config = a.getConf.GetConfig()
 	return res
 }
 

@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"fy-novel/internal/config"
+	"fy-novel/internal/model"
 	"fy-novel/internal/source"
 	"fy-novel/internal/version"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,9 +19,8 @@ func NewGetConf(l *logrus.Logger) *GetConf {
 	return &GetConf{log: l}
 }
 
-func (p *GetConf) GetConfigString() (string, error) {
-	conf, err := config.GetConf().ToJSON()
-	return conf, err
+func (p *GetConf) GetConfig() config.Info {
+	return config.GetConf()
 }
 
 type GetHint struct {
@@ -30,21 +31,21 @@ func NewGetHint(l *logrus.Logger) *GetHint {
 	return &GetHint{log: l}
 }
 
-func (p *GetHint) GetUsageInfo() []string {
+func (p *GetHint) GetUsageInfo() *model.GetUsageInfoResult {
 	cfg := config.GetConf()
 	rule := source.GetRuleBySourceID(cfg.Base.SourceID)
-	res := []string{
-		"使用须知",
-		fmt.Sprintf(
-			"easy-novel %s (commit %s, built at %s)\n",
+	res := &model.GetUsageInfoResult{
+		Title: "fy-novel 使用须知",
+		VersionInfo: fmt.Sprintf(
+			"fy-novel %s (commit %s, built at %s)\n",
 			version.Version,
 			version.Commit,
 			version.Date,
 		),
-		fmt.Sprintf("官方地址：%s", "https://fy-novel"),
-		fmt.Sprintf("当前书源：%s (ID: %d)", rule.URL, cfg.Base.SourceID),
-		fmt.Sprintf("导出格式：%s", cfg.Base.Extname),
-		"请务必阅读 readme.txt",
+		Address:           "https://github.com/767829413/fy-novel",
+		CurrentBookSource: fmt.Sprintf("%s (ID: %d)", rule.URL, cfg.Base.SourceID),
+		ExportFormat:      cfg.Base.Extname,
 	}
+
 	return res
 }

@@ -12,7 +12,7 @@ func formatForChapter(content string, rule *model.Rule) string {
 		if rule.Chapter.ParagraphTag == "p" {
 			return content
 		} else {
-			// 非 <p> 闭合标签，替换为 <p>
+			// 非 <p> 闭合标签, 替换为 <p>
 			re := regexp.MustCompile(`<([a-zA-Z][^>]*)>(.*?)</([a-zA-Z][^>]*)>`)
 			return re.ReplaceAllStringFunc(content, func(match string) string {
 				if strings.HasPrefix(match, "<p>") {
@@ -27,7 +27,7 @@ func formatForChapter(content string, rule *model.Rule) string {
 		}
 	}
 
-	// 标签不闭合，用某个标签分隔，例如：段落1<br><br>段落2
+	// 标签不闭合, 用某个标签分隔, 例如：段落1<br><br>段落2
 	tag := rule.Chapter.ParagraphTag
 	parts := strings.Split(content, tag)
 	var sb strings.Builder

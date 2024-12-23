@@ -7,7 +7,7 @@ import (
 )
 
 func txtConvert(title, content string) string {
-	// 全角空格，用于首行缩进
+	// 全角空格, 用于首行缩进
 	indent := strings.Repeat("\u3000", 2)
 
 	doc, err := html.Parse(strings.NewReader(content))

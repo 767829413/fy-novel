@@ -15,29 +15,28 @@ var defaultConfig embed.FS
 var confValue atomic.Value
 
 // Config stores all configuration of the application.
-type info struct {
+type Info struct {
 	Base struct {
-		SourceID     int    `mapstructure:"source-id"`
-		DownloadPath string `mapstructure:"download-path"`
-		Extname      string `mapstructure:"extname"`
-		AutoUpdate   int    `mapstructure:"auto-update"`
-		LogLevel     string `mapstructure:"log-level"`
-	} `mapstructure:"base"`
+		SourceID     int    `mapstructure:"source-id" json:"source-id"`
+		DownloadPath string `mapstructure:"download-path" json:"download-path"`
+		Extname      string `mapstructure:"extname" json:"extname"`
+		LogLevel     string `mapstructure:"log-level" json:"log-level"`
+	} `mapstructure:"base"  json:"base"`
 	Crawl struct {
-		Threads int `mapstructure:"threads"`
-	} `mapstructure:"crawl"`
+		Threads int `mapstructure:"threads" json:"threads"`
+	} `mapstructure:"crawl" json:"crawl"`
 	Retry struct {
-		MaxAttempts int `mapstructure:"max-attempts"`
-	} `mapstructure:"retry"`
+		MaxAttempts int `mapstructure:"max-attempts" json:"max-attempts"`
+	} `mapstructure:"retry" json:"retry"`
 }
 
 func init() {
-	confValue.Store(info{})
+	confValue.Store(Info{})
 	loadConfig()
 }
 
 // ToJSON returns the JSON string representation of the Config
-func (i info) ToJSON() (string, error) {
+func (i Info) ToJSON() (string, error) {
 	jsonBytes, err := json.Marshal(i)
 	if err != nil {
 		return "", err
@@ -63,7 +62,7 @@ func loadConfig() error {
 
 	viper.AutomaticEnv()
 
-	var newConf info
+	var newConf Info
 	if err := viper.Unmarshal(&newConf); err != nil {
 		return fmt.Errorf("failed to unmarshal config: %w", err)
 	}
@@ -72,6 +71,6 @@ func loadConfig() error {
 	return nil
 }
 
-func GetConf() info {
-	return confValue.Load().(info)
+func GetConf() Info {
+	return confValue.Load().(Info)
 }

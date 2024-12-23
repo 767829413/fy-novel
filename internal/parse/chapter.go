@@ -37,7 +37,7 @@ func (b *ChapterParser) Parse(
 	utils.SpinWaitMaxRetryAttempts(
 		func() bool {
 			var err error
-			var errTemp = "==> 正在重试下载失败章节内容: 【%s】，尝试次数: %d/%d，失败原因：%s\n"
+			var errTemp = "==> 正在重试下载失败章节内容: 【%s】, 尝试次数: %d/%d, 失败原因：%s\n"
 			// 防止重复获取
 			if !downOk {
 				chapter.Content, err = b.crawl(chapter.URL)

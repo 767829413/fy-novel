@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"fy-novel/internal/model"
 	"fy-novel/internal/version"
 
 	"github.com/Masterminds/semver/v3"
@@ -26,7 +27,7 @@ func NewCheckUpdate(l *logrus.Logger, timeoutMills int) *CheckUpdater {
 	return &CheckUpdater{log: l, timeoutMills: timeoutMills}
 }
 
-func (c *CheckUpdater) CheckUpdate() string {
+func (c *CheckUpdater) CheckUpdate() *model.GetUpdateInfoResult {
 	var res = "无法获取版本信息"
 	c.log.Info("Starting check update")
 	// 实现检查更新的逻辑
@@ -64,18 +65,20 @@ func (c *CheckUpdater) CheckUpdate() string {
 		}
 
 		if v2.GreaterThan(v1) {
-			res = fmt.Sprintf("发现新版本: %s (%s)", latestVersion, latestUrl)
+			res = fmt.Sprintf("发现新版本: %s, 当前版本: %s", latestVersion, currentVersion)
 		} else {
-			res = fmt.Sprintf("%s 已是最新版本！(%s)", latestVersion, latestUrl)
+			res = fmt.Sprintf("%s 已是最新版本！", latestVersion)
 		}
 	})
 
 	collector.OnError(func(r *colly.Response, err error) {
-		res = fmt.Sprintf("检查失败，当前网络环境暂时无法访问 GitHub，请稍后再试 (%s)", err.Error())
+		res = fmt.Sprintf("检查失败, 当前网络环境暂时无法访问 GitHub, 请稍后再试 (%s)", err.Error())
 	})
 
 	collector.Visit(RELEASE_URL)
 	collector.Wait()
-
-	return res
+	return &model.GetUpdateInfoResult{
+		UpdateInfo: res,
+		LatestUrl:  latestUrl,
+	}
 }

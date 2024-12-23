@@ -73,7 +73,7 @@ func epubMergeHandler(book *model.Book, dirPath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("epubMergeHandler error writing EPUB file: %v", err)
 	}
-	// 处理 EPUB 格式的临时 HTML ，删除文件
+	// 处理 EPUB 格式的临时 HTML , 删除文件
 	err = os.RemoveAll(dirPath)
 	if err != nil {
 		return "", fmt.Errorf("epubMergeHandler Error removing temporary HTML files: %v", err)
