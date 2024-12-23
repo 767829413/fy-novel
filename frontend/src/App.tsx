@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
 import { Layout, Menu, theme } from 'antd';
 import './App.css';
+import { DownloadProvider } from './context/DownloadContext';
 import DownloadNovel from './components/DownloadNovel';
 import CheckUpdate from './components/CheckUpdate';
 import ViewConfig from './components/ViewConfig';
 import UsageInfo from './components/UsageInfo';
 
-
-import CheckUpdateFunc from "../wailsjs/go/main/App.js"
-import GetUsageInfoFunc from "../wailsjs/go/main/App.js"
-import GetConfigFunc from "../wailsjs/go/main/App.js"
-
 const { Header, Content, Footer } = Layout;
-
 const options = [
     "下载小说",
     "检查更新",
@@ -35,7 +30,11 @@ const App: React.FC = () => {
     const renderContent = () => {
         switch (selectedOption) {
             case 0:
-                return <DownloadNovel />;
+                return (
+                    <DownloadProvider>
+                        <DownloadNovel />
+                    </DownloadProvider>
+                );
             case 1:
                 return <CheckUpdate />;
             case 2:

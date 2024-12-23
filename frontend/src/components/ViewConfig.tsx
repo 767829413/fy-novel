@@ -33,7 +33,7 @@ const ViewConfig: React.FC = () => {
     }, [form]);
 
     const onFinish = (values: model.GetConfigResult) => {
-        console.log('Updated config:', JSON.stringify(values, null, 2));
+        message.info(JSON.stringify(values, null, 2));
         message.error('暂未实现');
     };
 

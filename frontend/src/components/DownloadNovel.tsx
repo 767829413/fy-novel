@@ -4,6 +4,7 @@ import { EventsOn } from "../../wailsjs/runtime/runtime";
 import type { TableProps } from 'antd';
 import { SerachNovel, DownLoadNovel, GetDownloadProgress } from "../../wailsjs/go/main/App.js"
 import { model } from "../../wailsjs/go/models";
+import { useDownload } from '../context/DownloadContext';
 
 const { Search } = Input;
 
@@ -12,24 +13,23 @@ const DownloadNovel: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [downloadProgress, setDownloadProgress] = useState<number>(0);
-    const [isDownloading, setIsDownloading] = useState<boolean>(false);
-    const [currentDownloadingBook, setCurrentDownloadingBook] = useState<string | null>(null);
+    const [isMerging, setIsMerging] = useState<boolean>(false);
     const progressIntervalRef = useRef<number | null>(null);
+    const { isDownloading, setIsDownloading } = useDownload();
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const pageSize = 10; // 每页显示的条目数
 
     useEffect(() => {
-        // 从本地存储加载之前的搜索结果
         const savedResults = localStorage.getItem('searchResults');
         if (savedResults) {
             setSearchResults(JSON.parse(savedResults));
         }
 
-        // 监听下载进度事件
         EventsOn("downloadProgress", (progress: number) => {
             setDownloadProgress(progress);
         });
 
         return () => {
-            // 清理函数
             if (progressIntervalRef.current) {
                 clearInterval(progressIntervalRef.current);
             }
@@ -60,19 +60,22 @@ const DownloadNovel: React.FC = () => {
     const handleDownload = (record: model.SearchResult) => {
         setIsDownloading(true);
         setDownloadProgress(0);
-        setCurrentDownloadingBook(record.bookName);
+        setIsMerging(false);
         message.info(`开始下载《${record.bookName}》`);
 
         progressIntervalRef.current = window.setInterval(async () => {
             try {
                 const progress = await GetDownloadProgress(record);
                 if (progress.Exists) {
-                    const percentage = progress.Total > 0 
-                    ? Math.min(100, Math.max(0, Math.floor((progress.Completed / progress.Total) * 100)))
-                    : 0;
-                setDownloadProgress(percentage);
-                } 
-                
+                    const percentage = progress.Total > 0
+                        ? Math.min(99, Math.max(0, Math.floor((progress.Completed / progress.Total) * 99)))
+                        : 0;
+                    setDownloadProgress(percentage);
+
+                    if (percentage === 99 && !isMerging) {
+                        setIsMerging(true);
+                    }
+                }
             } catch (error) {
                 console.error("获取下载进度时出错:", error);
             }
@@ -84,6 +87,7 @@ const DownloadNovel: React.FC = () => {
                     clearInterval(progressIntervalRef.current);
                 }
                 setDownloadProgress(100);
+                setIsMerging(false);
                 message.success(`《${record.bookName}》下载完成！输出路径：${result.OutputPath} 花费时间: ${result.TakeTime} 秒`);
             })
             .catch((error) => {
@@ -98,8 +102,8 @@ const DownloadNovel: React.FC = () => {
                     clearInterval(progressIntervalRef.current);
                 }
                 setIsDownloading(false);
-                setCurrentDownloadingBook(null);
                 setDownloadProgress(0);
+                setIsMerging(false);
             });
     };
 
@@ -107,7 +111,7 @@ const DownloadNovel: React.FC = () => {
         {
             title: '序号',
             key: 'index',
-            render: (_, __, index) => index + 1,
+            render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
             align: 'center',
         },
         {
@@ -169,14 +173,26 @@ const DownloadNovel: React.FC = () => {
             <br />
             <br />
             {isDownloading && (
-                <div>
-                    <p>正在下载: {currentDownloadingBook}</p>
-                    <Progress percent={downloadProgress} status="active" />
-                </div>
+                <Progress
+                    percent={downloadProgress}
+                    status="active"
+                    format={(percent: number) => {
+                        if (isMerging) {
+                            return "正在合成小说文件...";
+                        }
+                        return `${percent}%`;
+                    }}
+                />
             )}
             <Table<model.SearchResult>
                 columns={columns}
                 dataSource={searchResults}
+                pagination={{
+                    current: currentPage,
+                    pageSize: pageSize,
+                    total: searchResults.length,
+                    onChange: (page: number) => setCurrentPage(page),
+                }}
             />
         </div>
     );
