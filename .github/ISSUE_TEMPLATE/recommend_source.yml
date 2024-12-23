@@ -1,0 +1,52 @@
+name: 问题报告
+description: 提交一个问题报告以帮助我们改进
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢您花时间填写这个问题报告！
+  - type: input
+    id: version
+    attributes:
+      label: 版本
+      description: 您正在使用的项目版本是什么？
+      placeholder: 例如：v1.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 发生了什么？
+      description: 请详细描述您遇到的问题。
+      placeholder: 清晰简洁地描述问题是什么。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 重现步骤
+      description: 如何重现这个问题？
+      placeholder: |
+        1. 转到 '...'
+        2. 点击 '....'
+        3. 滚动到 '....'
+        4. 看到错误
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期行为
+      description: 您期望看到什么？
+      placeholder: 清晰简洁地描述你期望发生的事情。
+  - type: textarea
+    id: logs
+    attributes:
+      label: 相关日志输出
+      description: 请复制并粘贴任何相关的日志输出。这将自动格式化为代码，因此无需反引号。
+      render: shell
+  - type: textarea
+    id: additional
+    attributes:
+      label: 附加信息
+      description: 添加任何其他上下文信息或有关该问题的截图。
