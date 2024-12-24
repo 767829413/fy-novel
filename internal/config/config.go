@@ -106,30 +106,72 @@ func GetConf() Info {
 
 func SetConf(conf string) error {
 	var newConf Info
-	// Parsing a JSON string
+	currentConf := GetConf()
+
+	// Parse the input JSON string
 	if err := json.Unmarshal([]byte(conf), &newConf); err != nil {
 		return fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
-	// Updating the in-memory configuration
-	confValue.Store(newConf)
+	// Compare and update configuration
+	updated := false
 
-	// Write the new configuration to a user-defined configuration file
+	// Update Base fields
+	if newConf.Base.SourceID != 0 && newConf.Base.SourceID != currentConf.Base.SourceID {
+		currentConf.Base.SourceID = newConf.Base.SourceID
+		updated = true
+	}
+	if newConf.Base.DownloadPath != "" &&
+		newConf.Base.DownloadPath != currentConf.Base.DownloadPath {
+		currentConf.Base.DownloadPath = newConf.Base.DownloadPath
+		updated = true
+	}
+	if newConf.Base.Extname != "" && newConf.Base.Extname != currentConf.Base.Extname {
+		currentConf.Base.Extname = newConf.Base.Extname
+		updated = true
+	}
+	if newConf.Base.LogLevel != "" && newConf.Base.LogLevel != currentConf.Base.LogLevel {
+		currentConf.Base.LogLevel = newConf.Base.LogLevel
+		updated = true
+	}
+
+	// Update Crawl fields
+	if newConf.Crawl.Threads != 0 && newConf.Crawl.Threads != currentConf.Crawl.Threads {
+		currentConf.Crawl.Threads = newConf.Crawl.Threads
+		updated = true
+	}
+
+	// Update Retry fields
+	if newConf.Retry.MaxAttempts != 0 &&
+		newConf.Retry.MaxAttempts != currentConf.Retry.MaxAttempts {
+		currentConf.Retry.MaxAttempts = newConf.Retry.MaxAttempts
+		updated = true
+	}
+
+	// If no updates, return early
+	if !updated {
+		return nil
+	}
+
+	// Update the in-memory configuration
+	confValue.Store(currentConf)
+
+	// Write the new configuration to the user-defined configuration file
 	expandedPath := os.ExpandEnv(customConfigPath)
 
-	// Make sure the catalog exists
+	// Ensure the directory exists
 	dir := filepath.Dir(expandedPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
-	// Converting Configuration to JSON
-	jsonData, err := json.MarshalIndent(newConf, "", "  ")
+	// Convert configuration to JSON
+	jsonData, err := json.MarshalIndent(currentConf, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal config to JSON: %w", err)
 	}
 
-	// write to a file
+	// Write to file
 	if err := os.WriteFile(expandedPath, jsonData, 0644); err != nil {
 		return fmt.Errorf("failed to write config file: %w", err)
 	}

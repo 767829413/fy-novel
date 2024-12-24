@@ -16,7 +16,7 @@ func GetConcurrencyNum(target int) int {
 	once.Do(func() {
 		defaultConcurrency = runtime.NumCPU()
 	})
-	if target == -1 {
+	if target == -1 || target == 0 {
 		target = defaultConcurrency * 2
 	}
 	if target >= maxThreads {
