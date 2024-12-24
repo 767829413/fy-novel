@@ -96,10 +96,10 @@ const DownloadNovel: React.FC = () => {
                 }
                 setDownloadProgress(100);
                 setIsMerging(false);
-                message.success(t('downloadNovel.downloadComplete', { 
-                    bookName: record.bookName, 
-                    outputPath: result.OutputPath, 
-                    takeTime: result.TakeTime 
+                message.success(t('downloadNovel.downloadComplete', {
+                    bookName: record.bookName,
+                    outputPath: result.OutputPath,
+                    takeTime: result.TakeTime
                 }));
             })
             .catch((error) => {
@@ -199,6 +199,7 @@ const DownloadNovel: React.FC = () => {
             <Table<model.SearchResult>
                 columns={columns}
                 dataSource={searchResults}
+                rowKey={(record) => `${record.bookName}-${record.author}`}
                 pagination={{
                     current: currentPage,
                     pageSize: pageSize,

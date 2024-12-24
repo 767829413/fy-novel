@@ -6,7 +6,6 @@ import { Spin, Typography, Form, Input, Slider, Button, message, Select, Tooltip
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
-const { TabPane } = Tabs;
 
 const ViewConfig: React.FC = () => {
     const { t } = useTranslation();
@@ -65,6 +64,134 @@ const ViewConfig: React.FC = () => {
         '32': '32'
     };
 
+    const tabItems = [
+        {
+            key: '1',
+            label: t('viewConfig.basicSettings'),
+            children: (
+                <>
+                    <Form.Item
+                        name={["base", "source-id"]}
+                        label={
+                            <span>
+                                {t('viewConfig.enableBookSource')}
+                                <Tooltip title={t('viewConfig.bookSourceTooltip')}>
+                                    <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+                                </Tooltip>
+                            </span>
+                        }
+                        style={{ width: '30%' }}
+                    >
+                        <Select
+                            options={[
+                                { value: 1, label: '1' },
+                                { value: 2, label: '2' },
+                            ]}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name={["base", "download-path"]}
+                        label={
+                            <span>
+                                {t('viewConfig.downloadPath')}
+                                <Tooltip title={t('viewConfig.downloadPathTooltip')}>
+                                    <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+                                </Tooltip>
+                            </span>
+                        }
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name={["base", "extname"]}
+                        label={
+                            <span>
+                                {t('viewConfig.fileExtension')}
+                                <Tooltip title={t('viewConfig.fileExtensionTooltip')}>
+                                    <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+                                </Tooltip>
+                            </span>
+                        }
+                        style={{ width: '30%' }}
+                    >
+                        <Select
+                            options={[
+                                { value: "txt", label: "txt" },
+                                { value: "epub", label: "epub" }
+                            ]}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name={["base", "log-level"]}
+                        label={
+                            <span>
+                                {t('viewConfig.logLevel')}
+                                <Tooltip title={t('viewConfig.logLevelTooltip')}>
+                                    <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+                                </Tooltip>
+                            </span>
+                        }
+                        style={{ width: '30%' }}
+                    >
+                        <Select
+                            options={['panic', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'].map(level => ({
+                                value: level,
+                                label: level
+                            }))}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+                </>
+            )
+        },
+        {
+            key: '2',
+            label: t('viewConfig.crawlSettings'),
+            children: (
+                <Form.Item
+                    name={["crawl", "threads"]}
+                    label={
+                        <span>
+                            {t('viewConfig.crawlThreads')}
+                            <Tooltip title={t('viewConfig.crawlThreadsTooltip')}>
+                                <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+                            </Tooltip>
+                        </span>
+                    }
+                >
+                    <Slider
+                        marks={threadMarks}
+                        step={null}
+                        min={-1}
+                        max={32}
+                        included={false}
+                    />
+                </Form.Item>
+            )
+        },
+        {
+            key: '3',
+            label: t('viewConfig.retrySettings'),
+            children: (
+                <Form.Item
+                    name={["retry", "max-attempts"]}
+                    label={
+                        <span>
+                            {t('viewConfig.maxRetries')}
+                            <Tooltip title={t('viewConfig.maxRetriesTooltip')}>
+                                <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+                            </Tooltip>
+                        </span>
+                    }
+                >
+                    <InputNumber min={0} />
+                </Form.Item>
+            )
+        }
+    ];
+
     return (
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
             <div style={{
@@ -91,119 +218,7 @@ const ViewConfig: React.FC = () => {
                     initialValues={config.Config}
                     style={{ maxWidth: '500px' }}
                 >
-                    <Tabs defaultActiveKey="1">
-                        <TabPane tab={t('viewConfig.basicSettings')} key="1">
-                            <Form.Item
-                                name={["base", "source-id"]}
-                                label={
-                                    <span>
-                                        {t('viewConfig.enableBookSource')}
-                                        <Tooltip title={t('viewConfig.bookSourceTooltip')}>
-                                            <QuestionCircleOutlined style={{ marginLeft: 4 }} />
-                                        </Tooltip>
-                                    </span>
-                                }
-                                style={{ width: '30%' }}
-                            >
-                                <Select
-                                    options={[
-                                        { value: 1, label: '1' },
-                                        { value: 2, label: '2' },
-                                    ]}
-                                    style={{ width: '100%' }}
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name={["base", "download-path"]}
-                                label={
-                                    <span>
-                                        {t('viewConfig.downloadPath')}
-                                        <Tooltip title={t('viewConfig.downloadPathTooltip')}>
-                                            <QuestionCircleOutlined style={{ marginLeft: 4 }} />
-                                        </Tooltip>
-                                    </span>
-                                }
-                            >
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={["base", "extname"]}
-                                label={
-                                    <span>
-                                        {t('viewConfig.fileExtension')}
-                                        <Tooltip title={t('viewConfig.fileExtensionTooltip')}>
-                                            <QuestionCircleOutlined style={{ marginLeft: 4 }} />
-                                        </Tooltip>
-                                    </span>
-                                }
-                                style={{ width: '30%' }}
-                            >
-                                <Select
-                                    options={[
-                                        { value: "txt", label: "txt" },
-                                        { value: "epub", label: "epub" }
-                                    ]}
-                                    style={{ width: '100%' }}
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name={["base", "log-level"]}
-                                label={
-                                    <span>
-                                        {t('viewConfig.logLevel')}
-                                        <Tooltip title={t('viewConfig.logLevelTooltip')}>
-                                            <QuestionCircleOutlined style={{ marginLeft: 4 }} />
-                                        </Tooltip>
-                                    </span>
-                                }
-                                style={{ width: '30%' }}
-                            >
-                                <Select
-                                    options={['panic', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'].map(level => ({
-                                        value: level,
-                                        label: level
-                                    }))}
-                                    style={{ width: '100%' }}
-                                />
-                            </Form.Item>
-                        </TabPane>
-                        <TabPane tab={t('viewConfig.crawlSettings')} key="2">
-                            <Form.Item
-                                name={["crawl", "threads"]}
-                                label={
-                                    <span>
-                                        {t('viewConfig.crawlThreads')}
-                                        <Tooltip title={t('viewConfig.crawlThreadsTooltip')}>
-                                            <QuestionCircleOutlined style={{ marginLeft: 4 }} />
-                                        </Tooltip>
-                                    </span>
-                                }
-                            >
-                                <Slider
-                                    marks={threadMarks}
-                                    step={null}
-                                    min={-1}
-                                    max={32}
-                                    included={false}
-                                />
-                            </Form.Item>
-                        </TabPane>
-                        <TabPane tab={t('viewConfig.retrySettings')} key="3">
-                            <Form.Item
-                                name={["retry", "max-attempts"]}
-                                label={
-                                    <span>
-                                        {t('viewConfig.maxRetries')}
-                                        <Tooltip title={t('viewConfig.maxRetriesTooltip')}>
-                                            <QuestionCircleOutlined style={{ marginLeft: 4 }} />
-                                        </Tooltip>
-                                    </span>
-                                }
-                            >
-                                <InputNumber min={0} />
-                            </Form.Item>
-                        </TabPane>
-                    </Tabs>
+                    <Tabs defaultActiveKey="1" items={tabItems} />
                 </Form>
             )}
         </div>
