@@ -39,10 +39,16 @@ const DownloadNovel: React.FC = () => {
     const handleSearch = async (value: string) => {
         setLoading(true);
         setSearchQuery(value);
+        localStorage.removeItem('searchResults'); // 清空之前的搜索结果
         try {
             const results = await SerachNovel(value);
             setSearchResults(results);
-            localStorage.setItem('searchResults', JSON.stringify(results));
+            try {
+                localStorage.setItem('searchResults', JSON.stringify(results));
+            } catch (storageError) {
+                console.error("存储搜索结果时出错:", storageError);
+                message.warning("无法存储搜索结果，可能是存储空间已满");
+            }
         } catch (error) {
             console.error("处理搜索时出错:", error);
             message.error("搜索失败，请稍后重试");
@@ -176,7 +182,7 @@ const DownloadNovel: React.FC = () => {
                 <Progress
                     percent={downloadProgress}
                     status="active"
-                    format={(percent: number) => {
+                    format={(percent: number = 0) => {
                         if (isMerging) {
                             return "正在合成小说文件...";
                         }
@@ -190,7 +196,7 @@ const DownloadNovel: React.FC = () => {
                 pagination={{
                     current: currentPage,
                     pageSize: pageSize,
-                    total: searchResults.length,
+                    total: searchResults ? searchResults.length : 0, // Ensure searchResults is not null
                     onChange: (page: number) => setCurrentPage(page),
                 }}
             />

@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	RELEASE_URL = "https://api.github.com/repos/767829413/easy-novel/releases"
+	RELEASE_URL = "https://api.github.com/repos/767829413/fy-novel/releases"
 )
 
 type CheckUpdater struct {

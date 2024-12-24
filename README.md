@@ -1,20 +1,17 @@
-# README
-
-## About
-
-This is the official Wails React-TS template.
-
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
-
-## Live Development
-
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
-
-## Building
-
-To build a redistributable, production mode package, use `wails build`.
 # fy-novel
+
+## 介绍
+
+用户欲免费阅新书且求最佳阅读体验者之所需。
+
+今国内网络小说多为完本，若欲观新书，或需于正版平台付费，或借笔趣阁等网站，或用“阅读”等安卓应用。
+
+此二法虽足常人，然众口难调，或嫌界面不美，或讥功能不足，或受平台所限。此时，阅读器之长处显现：可自定义。此工具之大用在于能将连载新书下载为epub格式，便可导入所好之阅读器。
+
+至于完本小说，亦可搜索下载。若有错字排版之误，宜自行搜寻精校版。
+
+## 使用介绍
+
+## 免责声明
+
+此程序乃作者研习Go语言之练习项目，倘使用中有何问题，皆与作者无关！！！
