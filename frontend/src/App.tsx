@@ -2,7 +2,6 @@ import './i18n';
 import React, { useState } from 'react';
 import { Layout, Menu, theme } from 'antd';
 import { useTranslation } from 'react-i18next';
-import './App.css';
 import { DownloadProvider } from './context/DownloadContext';
 import DownloadNovel from './components/DownloadNovel';
 import CheckUpdate from './components/CheckUpdate';
