@@ -1,26 +1,31 @@
+import './i18n';
 import React, { useState } from 'react';
 import { Layout, Menu, theme } from 'antd';
+import { useTranslation } from 'react-i18next';
 import './App.css';
 import { DownloadProvider } from './context/DownloadContext';
 import DownloadNovel from './components/DownloadNovel';
 import CheckUpdate from './components/CheckUpdate';
 import ViewConfig from './components/ViewConfig';
 import UsageInfo from './components/UsageInfo';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 const { Header, Content, Footer } = Layout;
-const options = [
-    "下载小说",
-    "检查更新",
-    "查看配置文件",
-    "使用须知",
-];
 
 const App: React.FC = () => {
+    const { t } = useTranslation();
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
     const [selectedOption, setSelectedOption] = useState<number>(0);
+
+    const options = [
+        { key: '0', label: t('app.menu.downloadNovel') },
+        { key: '1', label: t('app.menu.checkUpdate') },
+        { key: '2', label: t('app.menu.viewConfig') },
+        { key: '3', label: t('app.menu.usageInfo') },
+    ];
 
     const handleMenuClick = (e: any) => {
         const index = parseInt(e.key, 10);
@@ -42,31 +47,25 @@ const App: React.FC = () => {
             case 3:
                 return <UsageInfo />;
             default:
-                return <p>请选择一个选项</p>;
+                return <p>{t('app.menu.selectOption')}</p>;
         }
     };
 
-    const items = options.map((option, index) => ({
-        key: index.toString(),
-        label: option,
-    }));
-
     return (
         <Layout>
-            <Header style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Menu
                     theme="dark"
                     mode="horizontal"
-                    items={items}
-                    defaultSelectedKeys={[`0`]}
+                    items={options}
+                    defaultSelectedKeys={['0']}
                     style={{
-                        flex: 'none',
+                        flex: 1,
                         minWidth: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
                     }}
                     onClick={handleMenuClick}
                 />
+                <LanguageSwitcher />
             </Header>
             <Content style={{ padding: '0 48px' }}>
                 <div
@@ -81,7 +80,7 @@ const App: React.FC = () => {
                 </div>
             </Content>
             <Footer style={{ textAlign: 'center' }}>
-                我是混子 ©{new Date().getFullYear()} Created by 呵呵呵
+                {t('app.footer', { year: new Date().getFullYear() })}
             </Footer>
         </Layout>
     );

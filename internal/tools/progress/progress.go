@@ -28,14 +28,14 @@ func init() {
 	})
 }
 
-// InitTask 初始化一个新的任务进度
+// InitTask Initialize a new task progress
 func InitTask(taskID string, total int64) {
 	progressTracker.mu.Lock()
 	defer progressTracker.mu.Unlock()
 	progressTracker.tasks[taskID] = &TaskProgress{Total: total}
 }
 
-// UpdateProgress 更新指定任务的进度
+// UpdateProgress Updating the progress of a given task
 func UpdateProgress(taskID string, completed int64) {
 	progressTracker.mu.RLock()
 	task, exists := progressTracker.tasks[taskID]
@@ -48,7 +48,7 @@ func UpdateProgress(taskID string, completed int64) {
 	}
 }
 
-// GetProgress 获取指定任务的进度
+// GetProgress Get the progress of a given task
 func GetProgress(taskID string) (int64, int64, bool) {
 	progressTracker.mu.RLock()
 	task, exists := progressTracker.tasks[taskID]

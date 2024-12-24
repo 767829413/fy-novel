@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Table, Space, Input, Button, message, Progress } from 'antd';
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import type { TableProps } from 'antd';
@@ -9,6 +10,7 @@ import { useDownload } from '../context/DownloadContext';
 const { Search } = Input;
 
 const DownloadNovel: React.FC = () => {
+    const { t } = useTranslation();
     const [searchResults, setSearchResults] = useState<model.SearchResult[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -17,7 +19,7 @@ const DownloadNovel: React.FC = () => {
     const progressIntervalRef = useRef<number | null>(null);
     const { isDownloading, setIsDownloading } = useDownload();
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const pageSize = 10; // 每页显示的条目数
+    const pageSize = 10;
 
     useEffect(() => {
         const savedResults = localStorage.getItem('searchResults');
@@ -39,19 +41,19 @@ const DownloadNovel: React.FC = () => {
     const handleSearch = async (value: string) => {
         setLoading(true);
         setSearchQuery(value);
-        localStorage.removeItem('searchResults'); // 清空之前的搜索结果
+        localStorage.removeItem('searchResults');
         try {
             const results = await SerachNovel(value);
             setSearchResults(results);
             try {
                 localStorage.setItem('searchResults', JSON.stringify(results));
             } catch (storageError) {
-                console.error("存储搜索结果时出错:", storageError);
-                message.warning("无法存储搜索结果，可能是存储空间已满");
+                console.error(t('downloadNovel.storageError'), storageError);
+                message.warning(t('downloadNovel.storageWarning'));
             }
         } catch (error) {
-            console.error("处理搜索时出错:", error);
-            message.error("搜索失败，请稍后重试");
+            console.error(t('downloadNovel.searchError'), error);
+            message.error(t('downloadNovel.searchFailure'));
         } finally {
             setLoading(false);
         }
@@ -67,7 +69,7 @@ const DownloadNovel: React.FC = () => {
         setIsDownloading(true);
         setDownloadProgress(0);
         setIsMerging(false);
-        message.info(`开始下载《${record.bookName}》`);
+        message.info(t('downloadNovel.startDownload', { bookName: record.bookName }));
 
         progressIntervalRef.current = window.setInterval(async () => {
             try {
@@ -83,7 +85,7 @@ const DownloadNovel: React.FC = () => {
                     }
                 }
             } catch (error) {
-                console.error("获取下载进度时出错:", error);
+                console.error(t('downloadNovel.progressError'), error);
             }
         }, 1000);
 
@@ -94,14 +96,18 @@ const DownloadNovel: React.FC = () => {
                 }
                 setDownloadProgress(100);
                 setIsMerging(false);
-                message.success(`《${record.bookName}》下载完成！输出路径：${result.OutputPath} 花费时间: ${result.TakeTime} 秒`);
+                message.success(t('downloadNovel.downloadComplete', { 
+                    bookName: record.bookName, 
+                    outputPath: result.OutputPath, 
+                    takeTime: result.TakeTime 
+                }));
             })
             .catch((error) => {
                 if (progressIntervalRef.current) {
                     clearInterval(progressIntervalRef.current);
                 }
-                console.error("下载小说时出错:", error);
-                message.error(`下载《${record.bookName}》失败，请稍后重试`);
+                console.error(t('downloadNovel.downloadError'), error);
+                message.error(t('downloadNovel.downloadFailure', { bookName: record.bookName }));
             })
             .finally(() => {
                 if (progressIntervalRef.current) {
@@ -115,37 +121,37 @@ const DownloadNovel: React.FC = () => {
 
     const columns: TableProps<model.SearchResult>['columns'] = [
         {
-            title: '序号',
+            title: t('downloadNovel.columnIndex'),
             key: 'index',
             render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
             align: 'center',
         },
         {
-            title: '书名',
+            title: t('downloadNovel.columnBookName'),
             dataIndex: 'bookName',
             key: 'BookName',
             align: 'center',
         },
         {
-            title: '作者',
+            title: t('downloadNovel.columnAuthor'),
             dataIndex: 'author',
             key: 'Author',
             align: 'center',
         },
         {
-            title: '最新章节',
+            title: t('downloadNovel.columnLatestChapter'),
             dataIndex: 'latestChapter',
             key: 'LatestChapter',
             align: 'center',
         },
         {
-            title: '最后更新时间',
+            title: t('downloadNovel.columnLatestUpdate'),
             dataIndex: 'latestUpdate',
             key: 'LatestUpdate',
             align: 'center',
         },
         {
-            title: '操作',
+            title: t('downloadNovel.columnAction'),
             key: 'action',
             align: 'center',
             render: (_, record) => (
@@ -154,7 +160,7 @@ const DownloadNovel: React.FC = () => {
                         onClick={() => handleDownload(record)}
                         disabled={isDownloading}
                     >
-                        下载
+                        {t('downloadNovel.buttonDownload')}
                     </Button>
                 </Space>
             ),
@@ -163,18 +169,18 @@ const DownloadNovel: React.FC = () => {
 
     return (
         <div>
-            <h2>开始搜索</h2>
+            <h2>{t('downloadNovel.startSearch')}</h2>
             <Space>
                 <Search
-                    placeholder="输入小说名称"
-                    enterButton="搜索"
+                    placeholder={t('downloadNovel.searchPlaceholder')}
+                    enterButton={t('downloadNovel.buttonSearch')}
                     size="large"
                     loading={loading}
                     onSearch={handleSearch}
                     value={searchQuery}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                 />
-                <Button onClick={handleClear} size="large">清空</Button>
+                <Button onClick={handleClear} size="large">{t('downloadNovel.buttonClear')}</Button>
             </Space>
             <br />
             <br />
@@ -184,7 +190,7 @@ const DownloadNovel: React.FC = () => {
                     status="active"
                     format={(percent: number = 0) => {
                         if (isMerging) {
-                            return "正在合成小说文件...";
+                            return t('downloadNovel.merging');
                         }
                         return `${percent}%`;
                     }}
@@ -196,7 +202,7 @@ const DownloadNovel: React.FC = () => {
                 pagination={{
                     current: currentPage,
                     pageSize: pageSize,
-                    total: searchResults ? searchResults.length : 0, // Ensure searchResults is not null
+                    total: searchResults ? searchResults.length : 0,
                     onChange: (page: number) => setCurrentPage(page),
                 }}
             />

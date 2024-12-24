@@ -41,7 +41,7 @@ func getTemplate(extName string) (*template.Template, error) {
 
 	var templateContent string
 	switch extName {
-	case definition.NovelExtname_HTML: // 通用HTML模板
+	case definition.NovelExtname_HTML: // Generic HTML Templates
 		templateContent = definition.NovelTemp_HTML
 	case definition.NovelExtname_EPUB:
 		templateContent = definition.NovelTemp_EPUB

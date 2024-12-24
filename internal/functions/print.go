@@ -39,7 +39,6 @@ func (p *GetHint) GetUsageInfo() *model.GetUsageInfoResult {
 	cfg := config.GetConf()
 	rule := source.GetRuleBySourceID(cfg.Base.SourceID)
 	res := &model.GetUsageInfoResult{
-		Title: "fy-novel 使用须知",
 		VersionInfo: fmt.Sprintf(
 			"fy-novel %s (commit %s, built at %s)\n",
 			version.Version,

@@ -28,9 +28,11 @@ func NewCheckUpdate(l *logrus.Logger, timeoutMills int) *CheckUpdater {
 }
 
 func (c *CheckUpdater) CheckUpdate() *model.GetUpdateInfoResult {
-	var res = "无法获取版本信息"
 	c.log.Info("Starting check update")
-	// 实现检查更新的逻辑
+	res := &model.GetUpdateInfoResult{
+		CurrentVersion: version.Version,
+	}
+	// Implement update check logic
 	collector := colly.NewCollector(
 		colly.Async(true),
 	)
@@ -50,11 +52,11 @@ func (c *CheckUpdater) CheckUpdate() *model.GetUpdateInfoResult {
 		}
 
 		latest := releases[0]
-		currentVersion := version.Version
 		latestVersion = latest["tag_name"].(string)
 		latestUrl = latest["html_url"].(string)
-
-		v1, err := semver.NewVersion(currentVersion)
+		res.LatestVersion = latestVersion
+		res.LatestUrl = latestUrl
+		v1, err := semver.NewVersion(res.CurrentVersion)
 		if err != nil {
 			return
 		}
@@ -65,20 +67,20 @@ func (c *CheckUpdater) CheckUpdate() *model.GetUpdateInfoResult {
 		}
 
 		if v2.GreaterThan(v1) {
-			res = fmt.Sprintf("发现新版本: %s, 当前版本: %s", latestVersion, currentVersion)
+			res.NeedUpdate = true
 		} else {
-			res = fmt.Sprintf("%s 已是最新版本！", latestVersion)
+			res.NeedUpdate = false
 		}
 	})
 
 	collector.OnError(func(r *colly.Response, err error) {
-		res = fmt.Sprintf("检查失败, 当前网络环境暂时无法访问 GitHub, 请稍后再试 (%s)", err.Error())
+		res.ErrorMsg = fmt.Sprintf(
+			"Check failed, current network environment cannot access GitHub, please try again later (%s)",
+			err.Error(),
+		)
 	})
 
 	collector.Visit(RELEASE_URL)
 	collector.Wait()
-	return &model.GetUpdateInfoResult{
-		UpdateInfo: res,
-		LatestUrl:  latestUrl,
-	}
+	return res
 }

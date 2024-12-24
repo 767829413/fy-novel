@@ -29,7 +29,7 @@ func NewNovelCrawler() Crawler {
 
 func (nc *novelCrawler) Search(key string) ([]*model.SearchResult, error) {
 	conf := config.GetConf()
-	// 解析
+	// Parse
 	res, err := parse.NewSearchResultParser(conf.Base.SourceID).Parse(key)
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (nc *novelCrawler) Search(key string) ([]*model.SearchResult, error) {
 
 func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.CrawlResult, error) {
 	conf := config.GetConf()
-	// 小说详情页抓取解析
+	// Fetch and parse the novel details page
 	book, err := parse.NewBookParser(conf.Base.SourceID).Parse(res.Url)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 	if err != nil {
 		return nil, err
 	}
-	// 获取小说目录
+	// Get the novel's table of contents
 	catalogsParser := parse.NewCatalogsParser(conf.Base.SourceID)
 	catalogs, err := catalogsParser.Parse(res.Url, start, end)
 	if err != nil {
@@ -64,13 +64,13 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 	}
 
 	startTime := time.Now()
-	// 解析下载内容
-	// 限制并发处理
+	// Parse and download content
+	// Limit concurrent processing
 	var wg sync.WaitGroup
 	threads := concurrencyTool.GetConcurrencyNum(conf.Crawl.Threads)
 	semaphore := make(chan struct{}, threads)
 	var nowCatalogsCount = int32(0)
-	// 总的完成任务数 = 抓取文章数量 + 1(合成任务)
+	// Total completed tasks = number of chapters fetched + 1 (merging task)
 	progressTool.InitTask(res.Url, int64(len(catalogs)+1))
 	for _, chapter := range catalogs {
 		wg.Add(1)
@@ -78,7 +78,7 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 			defer wg.Done()
 			semaphore <- struct{}{}
 			defer func() { <-semaphore }()
-			// 下载逻辑
+			// Download logic
 			parse.NewChapterParser(conf.Base.SourceID).Parse(chapter, res, book, bookDir)
 			chapterTool.CreateFileForChapter(chapter, bookDir)
 			defer func() {
@@ -92,12 +92,12 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 	}
 	wg.Wait()
 
-	// 合并生成小说文件格式
+	// Merge and generate the novel file format
 	outputPath, err := mergeTool.MergeSaveHandler(book, dirPath)
 	if err != nil {
 		return nil, err
 	}
-	// 任务完成
+	// Task completed
 	defer func() {
 		atomic.AddInt32(&nowCatalogsCount, 1)
 		progressTool.UpdateProgress(res.Url, int64(nowCatalogsCount))

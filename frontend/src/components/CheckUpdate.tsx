@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { GetUpdateInfo } from "../../wailsjs/go/main/App.js"
+import { QRCode, Space, Input, Button, message } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { model } from "../../wailsjs/go/models";
-import { QRCode,Space, Input, Button, message } from 'antd';
+import { GetUpdateInfo } from "../../wailsjs/go/main/App.js"
 import { CopyOutlined } from '@ant-design/icons';
 
 const CheckUpdate: React.FC = () => {
+    const { t } = useTranslation();
     const [updateInfo, setUpdateInfo] = useState<model.GetUpdateInfoResult | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -14,10 +16,13 @@ const CheckUpdate: React.FC = () => {
                 const result = await GetUpdateInfo();
                 setUpdateInfo(result);
             } catch (error) {
-                console.error("获取更新信息时出错:", error);
+                console.error(t('checkUpdate.errorFetching'), error);
                 setUpdateInfo({
-                    UpdateInfo: "获取更新信息失败，请稍后重试。",
-                    LatestUrl: ""
+                    ErrorMsg: t('checkUpdate.fetchFailure'),
+                    NeedUpdate: false,
+                    LatestVersion: '',
+                    CurrentVersion: '',
+                    LatestUrl: ''
                 });
             } finally {
                 setLoading(false);
@@ -25,49 +30,62 @@ const CheckUpdate: React.FC = () => {
         };
 
         fetchUpdateInfo();
-    }, []);
+    }, [t]);
 
     const copyToClipboard = () => {
         if (updateInfo?.LatestUrl) {
             navigator.clipboard.writeText(updateInfo.LatestUrl)
                 .then(() => {
-                    message.success('链接已复制到剪贴板');
+                    message.success(t('checkUpdate.copySuccess'));
                 })
                 .catch(() => {
-                    message.error('复制失败，请手动复制');
+                    message.error(t('checkUpdate.copyFailure'));
                 });
         }
     };
 
+    const renderUpdateInfo = () => {
+        if (!updateInfo) return null;
+
+        if (updateInfo.ErrorMsg) {
+            return <p>{updateInfo.ErrorMsg}</p>;
+        }
+
+        if (updateInfo.NeedUpdate) {
+            return (
+                <>
+                    <p>{t('checkUpdate.newVersionAvailable', { version: updateInfo.LatestVersion })}</p>
+                    <p>{t('checkUpdate.currentVersion', { version: updateInfo.CurrentVersion })}</p>
+                    <QRCode value={updateInfo.LatestUrl || '-'} />
+                    <Space>
+                        <Input
+                            value={updateInfo.LatestUrl}
+                            readOnly
+                            style={{ width: '300px' }}
+                        />
+                        <Button
+                            icon={<CopyOutlined />}
+                            onClick={copyToClipboard}
+                        >
+                            {t('checkUpdate.copy')}
+                        </Button>
+                    </Space>
+                </>
+            );
+        }
+
+        return <p>{t('checkUpdate.upToDate')}</p>;
+    };
+
     return (
         <div>
-            <h2>检查更新</h2>
+            <h2>{t('checkUpdate.title')}</h2>
             {loading ? (
-                <p>正在检查更新...</p>
-            ) : updateInfo ? (
-                <Space direction="vertical" align="center" style={{ width: '100%' }}>
-                    <p>{updateInfo.UpdateInfo}</p>
-                    {updateInfo.LatestUrl && (
-                        <>
-                            <QRCode value={updateInfo.LatestUrl || '-'} />
-                            <Space>
-                                <Input
-                                    value={updateInfo.LatestUrl}
-                                    readOnly
-                                    style={{ width: '300px' }}
-                                />
-                                <Button
-                                    icon={<CopyOutlined />}
-                                    onClick={copyToClipboard}
-                                >
-                                    复制
-                                </Button>
-                            </Space>
-                        </>
-                    )}
-                </Space>
+                <p>{t('checkUpdate.checking')}</p>
             ) : (
-                <p>无法获取更新信息</p>
+                <Space direction="vertical" align="center" style={{ width: '100%' }}>
+                    {renderUpdateInfo()}
+                </Space>
             )}
         </div>
     );

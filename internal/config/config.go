@@ -20,7 +20,7 @@ var (
 	initOnce  sync.Once
 )
 
-// 用户自定义的配置路径
+// User-defined configuration paths
 const customConfigPath = "$HOME/.fynovel/config.json"
 
 // { "base": { "source-id": 3, "download-path": "downloads", "extname": "epub", "log-level": "error" }, "crawl": { "threads": -1 }, "retry": { "max-attempts": 3 } }
@@ -45,7 +45,7 @@ func init() {
 	initOnce.Do(func() {
 		confValue.Store(Info{})
 		if err := loadConfig(); err != nil {
-			// 在初始化失败时，我们应该记录错误或采取适当的措施
+			// In the event of an initialization failure, we should log the error or take appropriate action
 			fmt.Printf("Failed to load config: %v\n", err)
 		}
 	})
@@ -64,16 +64,16 @@ func (i Info) ToJSON() (string, error) {
 func loadConfig() error {
 	viper.Reset()
 
-	// 检查用户自定义配置文件是否存在
+	// Check for the existence of a user-defined configuration file
 	expandedPath := os.ExpandEnv(customConfigPath)
 	if _, err := os.Stat(expandedPath); err == nil {
-		// 用户自定义配置文件存在，加载它
+		// User-defined configuration file exists, load it
 		viper.SetConfigFile(expandedPath)
 		if err := viper.ReadInConfig(); err != nil {
 			return fmt.Errorf("failed to read custom config file: %w", err)
 		}
 	} else {
-		// 用户自定义配置文件不存在，加载默认配置
+		// User-defined configuration file does not exist, load default configuration
 		defaultConfigFile, err := defaultConfig.Open("default_config.yaml")
 		if err != nil {
 			return fmt.Errorf("failed to open default config: %w", err)
@@ -86,16 +86,16 @@ func loadConfig() error {
 		}
 	}
 
-	// 允许通过环境变量覆盖配置
+	// Allow overriding configuration via environment variables
 	viper.AutomaticEnv()
 
-	// 将配置解析到结构体中
+	// Parsing Configuration into Structures
 	var newConf Info
 	if err := viper.Unmarshal(&newConf); err != nil {
 		return fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
-	// 存储新的配置
+	// Storing new configurations
 	confValue.Store(newConf)
 	return nil
 }
@@ -106,30 +106,30 @@ func GetConf() Info {
 
 func SetConf(conf string) error {
 	var newConf Info
-	// 解析 JSON 字符串
+	// Parsing a JSON string
 	if err := json.Unmarshal([]byte(conf), &newConf); err != nil {
 		return fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
-	// 更新内存中的配置
+	// Updating the in-memory configuration
 	confValue.Store(newConf)
 
-	// 将新配置写入用户自定义的配置文件
+	// Write the new configuration to a user-defined configuration file
 	expandedPath := os.ExpandEnv(customConfigPath)
 
-	// 确保目录存在
+	// Make sure the catalog exists
 	dir := filepath.Dir(expandedPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
-	// 将配置转换为 JSON
+	// Converting Configuration to JSON
 	jsonData, err := json.MarshalIndent(newConf, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal config to JSON: %w", err)
 	}
 
-	// 写入文件
+	// write to a file
 	if err := os.WriteFile(expandedPath, jsonData, 0644); err != nil {
 		return fmt.Errorf("failed to write config file: %w", err)
 	}

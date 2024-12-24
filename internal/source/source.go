@@ -19,22 +19,22 @@ func GetRuleBySourceID(sourceId int) *model.Rule {
 		return v.(*model.Rule)
 	}
 
-	// 构建文件路径
+	// Build the file path
 	filePath := fmt.Sprintf("rule/rule%d.json", sourceId)
-	// 读取文件内容
+	// Read the file content
 	ruleData, err := ruleFS.ReadFile(filePath)
 	if err != nil {
 		return nil
 	}
 
-	// 解析 JSON 到 Rule 结构体
+	// Parse JSON into Rule struct
 	var rule model.Rule
 	err = json.Unmarshal(ruleData, &rule)
 	if err != nil {
 		return nil
 	}
 
-	// 使用 LoadOrStore 方法来确保线程安全的写入
+	// Use LoadOrStore method to ensure thread-safe writing
 	actual, _ := ruleCache.LoadOrStore(sourceId, &rule)
 	return actual.(*model.Rule)
 }

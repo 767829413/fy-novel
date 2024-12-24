@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GetConfig, SetConfig } from "../../wailsjs/go/main/App.js"
 import { model } from "../../wailsjs/go/models";
 import { Spin, Typography, Form, Input, Slider, Button, message, Select, Tooltip, Tabs, InputNumber } from 'antd';
@@ -8,6 +9,7 @@ const { Title } = Typography;
 const { TabPane } = Tabs;
 
 const ViewConfig: React.FC = () => {
+    const { t } = useTranslation();
     const [config, setConfig] = useState<model.GetConfigResult | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [form] = Form.useForm();
@@ -22,28 +24,28 @@ const ViewConfig: React.FC = () => {
                     form.setFieldsValue(result.Config);
                 }
             } catch (error) {
-                console.error("获取配置信息时出错:", error);
-                message.error("获取配置信息失败");
+                console.error(t('viewConfig.fetchError'), error);
+                message.error(t('viewConfig.fetchErrorMessage'));
             } finally {
                 setLoading(false);
             }
         };
 
         fetchConfig();
-    }, [form]);
+    }, [form, t]);
 
     const onFinish = async (values: model.GetConfigResult) => {
         try {
             const configJson = JSON.stringify(values, null, 2);
             const res = await SetConfig(configJson);
             if (res.length == 0) {
-                message.success('配置更新成功');
+                message.success(t('viewConfig.updateSuccess'));
             } else {
                 message.error(res);
             }
         } catch (error) {
-            console.error("更新配置时出错:", error);
-            message.error('更新配置失败');
+            console.error(t('viewConfig.updateError'), error);
+            message.error(t('viewConfig.updateErrorMessage'));
         }
     };
 
@@ -64,21 +66,23 @@ const ViewConfig: React.FC = () => {
     };
 
     return (
-        <div style={{ maxWidth: '600px', margin: '0 auto', position: 'relative' }}>
-            <Title level={2} style={{ marginBottom: '20px' }}>配置一览</Title>
-            <Tooltip title="建议使用默认配置以获得最佳性能">
-                <Button
-                    type="primary"
-                    onClick={() => form.submit()}
-                    style={{
-                        position: 'absolute',
-                        top: '0',
-                        right: '0'
-                    }}
-                >
-                    更新配置
-                </Button>
-            </Tooltip>
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '20px'
+            }}>
+                <Title level={2} style={{ margin: 0 }}>{t('viewConfig.title')}</Title>
+                <Tooltip title={t('viewConfig.updateConfigTooltip')}>
+                    <Button
+                        type="primary"
+                        onClick={() => form.submit()}
+                    >
+                        {t('viewConfig.updateConfig')}
+                    </Button>
+                </Tooltip>
+            </div>
             {config && config.Config && (
                 <Form
                     form={form}
@@ -88,13 +92,13 @@ const ViewConfig: React.FC = () => {
                     style={{ maxWidth: '500px' }}
                 >
                     <Tabs defaultActiveKey="1">
-                        <TabPane tab="基础设置" key="1">
+                        <TabPane tab={t('viewConfig.basicSettings')} key="1">
                             <Form.Item
                                 name={["base", "source-id"]}
                                 label={
                                     <span>
-                                        启用书源
-                                        <Tooltip title="只能选一个, 当前可选值：1、2、3，建议使用默认书源 3">
+                                        {t('viewConfig.enableBookSource')}
+                                        <Tooltip title={t('viewConfig.bookSourceTooltip')}>
                                             <QuestionCircleOutlined style={{ marginLeft: 4 }} />
                                         </Tooltip>
                                     </span>
@@ -114,8 +118,8 @@ const ViewConfig: React.FC = () => {
                                 name={["base", "download-path"]}
                                 label={
                                     <span>
-                                        下载路径
-                                        <Tooltip title="绝对相对均可 (Windows 路径分隔符不要用 \ , 用 / 或 \)">
+                                        {t('viewConfig.downloadPath')}
+                                        <Tooltip title={t('viewConfig.downloadPathTooltip')}>
                                             <QuestionCircleOutlined style={{ marginLeft: 4 }} />
                                         </Tooltip>
                                     </span>
@@ -127,8 +131,8 @@ const ViewConfig: React.FC = () => {
                                 name={["base", "extname"]}
                                 label={
                                     <span>
-                                        文件扩展名
-                                        <Tooltip title="支持 txt, epub, 推荐 epub">
+                                        {t('viewConfig.fileExtension')}
+                                        <Tooltip title={t('viewConfig.fileExtensionTooltip')}>
                                             <QuestionCircleOutlined style={{ marginLeft: 4 }} />
                                         </Tooltip>
                                     </span>
@@ -147,8 +151,8 @@ const ViewConfig: React.FC = () => {
                                 name={["base", "log-level"]}
                                 label={
                                     <span>
-                                        日志级别
-                                        <Tooltip title="默认 error (panic fatal error warn info debug trace)">
+                                        {t('viewConfig.logLevel')}
+                                        <Tooltip title={t('viewConfig.logLevelTooltip')}>
                                             <QuestionCircleOutlined style={{ marginLeft: 4 }} />
                                         </Tooltip>
                                     </span>
@@ -164,13 +168,13 @@ const ViewConfig: React.FC = () => {
                                 />
                             </Form.Item>
                         </TabPane>
-                        <TabPane tab="爬取设置" key="2">
+                        <TabPane tab={t('viewConfig.crawlSettings')} key="2">
                             <Form.Item
                                 name={["crawl", "threads"]}
                                 label={
                                     <span>
-                                        爬取线程数
-                                        <Tooltip title="-1 表示自动设置，设置过大会引发防爬机制">
+                                        {t('viewConfig.crawlThreads')}
+                                        <Tooltip title={t('viewConfig.crawlThreadsTooltip')}>
                                             <QuestionCircleOutlined style={{ marginLeft: 4 }} />
                                         </Tooltip>
                                     </span>
@@ -185,13 +189,13 @@ const ViewConfig: React.FC = () => {
                                 />
                             </Form.Item>
                         </TabPane>
-                        <TabPane tab="重试设置" key="3">
+                        <TabPane tab={t('viewConfig.retrySettings')} key="3">
                             <Form.Item
                                 name={["retry", "max-attempts"]}
                                 label={
                                     <span>
-                                        最大重试次数
-                                        <Tooltip title="针对首次下载失败的章节">
+                                        {t('viewConfig.maxRetries')}
+                                        <Tooltip title={t('viewConfig.maxRetriesTooltip')}>
                                             <QuestionCircleOutlined style={{ marginLeft: 4 }} />
                                         </Tooltip>
                                     </span>

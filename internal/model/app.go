@@ -3,7 +3,6 @@ package model
 import "fy-novel/internal/config"
 
 type GetUsageInfoResult struct {
-	Title             string
 	VersionInfo       string
 	Address           string
 	CurrentBookSource string
@@ -11,8 +10,11 @@ type GetUsageInfoResult struct {
 }
 
 type GetUpdateInfoResult struct {
-	UpdateInfo string
-	LatestUrl  string
+	ErrorMsg       string
+	NeedUpdate     bool
+	LatestVersion  string
+	CurrentVersion string
+	LatestUrl      string
 }
 
 type GetConfigResult struct {

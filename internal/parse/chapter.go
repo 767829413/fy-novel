@@ -33,16 +33,16 @@ func (b *ChapterParser) Parse(
 	downOk := false
 	attemptStart := 1
 	attempt := conf.Retry.MaxAttempts
-	// 抓取内容
+	// Fetch content
 	utils.SpinWaitMaxRetryAttempts(
 		func() bool {
 			var err error
-			var errTemp = "==> 正在重试下载失败章节内容: 【%s】, 尝试次数: %d/%d, 失败原因：%s\n"
-			// 防止重复获取
+			var errTemp = "==> Retrying to download failed chapter content: [%s], Attempt: %d/%d, Reason: %s\n"
+			// Prevent duplicate fetching
 			if !downOk {
 				chapter.Content, err = b.crawl(chapter.URL)
 				if err != nil {
-					// 尝试重试
+					// Attempt retry
 					fmt.Printf(
 						errTemp,
 						chapter.Title,
@@ -58,7 +58,7 @@ func (b *ChapterParser) Parse(
 			}
 			err = chapterTool.ConvertChapter(chapter, conf.Base.Extname, b.rule)
 			if err != nil {
-				// 尝试重试
+				// Attempt retry
 				fmt.Printf(
 					errTemp,
 					chapter.Title,
@@ -87,7 +87,7 @@ func (b *ChapterParser) crawl(url string) (string, error) {
 			if err == nil {
 				sb.WriteString(html)
 			} else {
-				// 打印错误
+				// Print error
 				fmt.Printf("ChapterParser crawl Error parsing HTML: %v\n", err)
 			}
 		})
@@ -100,7 +100,7 @@ func (b *ChapterParser) crawl(url string) (string, error) {
 			return sb.String(), nil
 		} else {
 			collector.OnHTML(b.rule.Chapter.NextPage, func(e *colly.HTMLElement) {
-				if strings.Contains(e.Text, "下一章") {
+				if strings.Contains(e.Text, "Next Chapter") {
 					nextUrl = ""
 					return
 				}

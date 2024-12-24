@@ -87,7 +87,10 @@ export namespace model {
 		}
 	}
 	export class GetUpdateInfoResult {
-	    UpdateInfo: string;
+	    ErrorMsg: string;
+	    NeedUpdate: boolean;
+	    LatestVersion: string;
+	    CurrentVersion: string;
 	    LatestUrl: string;
 	
 	    static createFrom(source: any = {}) {
@@ -96,12 +99,14 @@ export namespace model {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.UpdateInfo = source["UpdateInfo"];
+	        this.ErrorMsg = source["ErrorMsg"];
+	        this.NeedUpdate = source["NeedUpdate"];
+	        this.LatestVersion = source["LatestVersion"];
+	        this.CurrentVersion = source["CurrentVersion"];
 	        this.LatestUrl = source["LatestUrl"];
 	    }
 	}
 	export class GetUsageInfoResult {
-	    Title: string;
 	    VersionInfo: string;
 	    Address: string;
 	    CurrentBookSource: string;
@@ -113,7 +118,6 @@ export namespace model {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Title = source["Title"];
 	        this.VersionInfo = source["VersionInfo"];
 	        this.Address = source["Address"];
 	        this.CurrentBookSource = source["CurrentBookSource"];
