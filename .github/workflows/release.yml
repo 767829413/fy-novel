@@ -60,7 +60,7 @@ jobs:
           COMMIT: ${{ steps.get_version.outputs.COMMIT }}
           DATE: ${{ steps.get_version.outputs.DATE }}
         run: |
-          wails build -clean -platform windows,linux -ldflags="-X 'fy-novel/internal/version.Version=$VERSION' -X 'fy-novel/internal/version.Commit=$COMMIT' -X 'fy-novel/internal/version.Date=$DATE'"
+          wails build -clean -platform=windows,linux -ldflags="-X 'fy-novel/internal/version.Version=$VERSION' -X 'fy-novel/internal/version.Commit=$COMMIT' -X 'fy-novel/internal/version.Date=$DATE'"
 
       - name: Compress executables
         run: |

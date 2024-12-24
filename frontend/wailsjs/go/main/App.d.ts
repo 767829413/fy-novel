@@ -13,3 +13,5 @@ export function GetUpdateInfo():Promise<model.GetUpdateInfoResult>;
 export function GetUsageInfo():Promise<model.GetUsageInfoResult>;
 
 export function SerachNovel(arg1:string):Promise<Array<model.SearchResult>>;
+
+export function SetConfig(arg1:string):Promise<string>;

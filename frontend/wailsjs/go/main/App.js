@@ -25,3 +25,7 @@ export function GetUsageInfo() {
 export function SerachNovel(arg1) {
   return window['go']['main']['App']['SerachNovel'](arg1);
 }
+
+export function SetConfig(arg1) {
+  return window['go']['main']['App']['SetConfig'](arg1);
+}

@@ -16,7 +16,7 @@ type App struct {
 	log          *logrus.Logger
 	checkUpdater *functions.CheckUpdater
 	downloader   *functions.Downloader
-	getConf      *functions.GetConf
+	confHandler  *functions.ConfHandler
 	getHint      *functions.GetHint
 }
 
@@ -39,7 +39,7 @@ func (a *App) startup(ctx context.Context) {
 	log.SetLevel(logrus.ErrorLevel)
 	a.checkUpdater = functions.NewCheckUpdate(log, 5000)
 	a.downloader = functions.NewDownload(log)
-	a.getConf = functions.NewGetConf(log)
+	a.confHandler = functions.NewGetConf(log)
 	a.getHint = functions.NewGetHint(log)
 	a.log = log
 }
@@ -72,7 +72,7 @@ func (a *App) GetUsageInfo() *model.GetUsageInfoResult {
 
 func (a *App) GetConfig() *model.GetConfigResult {
 	res := &model.GetConfigResult{}
-	res.Config = a.getConf.GetConfig()
+	res.Config = a.confHandler.GetConfig()
 	return res
 }
 
@@ -85,4 +85,11 @@ func (a *App) GetDownloadProgress(sr *model.SearchResult) *model.ProgressResult 
 		res.Total = int(total)
 	}
 	return res
+}
+
+func (a *App) SetConfig(conf string) string {
+	if err := a.confHandler.SetConfig(conf); err != nil {
+		return err.Error()
+	}
+	return ""
 }

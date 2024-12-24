@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { GetConfig } from "../../wailsjs/go/main/App.js"
+import { GetConfig, SetConfig } from "../../wailsjs/go/main/App.js"
 import { model } from "../../wailsjs/go/models";
-import { Spin, Typography, Form, Input, Slider, Button, message, Select, Tooltip, Tabs,InputNumber } from 'antd';
+import { Spin, Typography, Form, Input, Slider, Button, message, Select, Tooltip, Tabs, InputNumber } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
@@ -32,9 +32,19 @@ const ViewConfig: React.FC = () => {
         fetchConfig();
     }, [form]);
 
-    const onFinish = (values: model.GetConfigResult) => {
-        message.info(JSON.stringify(values, null, 2));
-        message.error('暂未实现');
+    const onFinish = async (values: model.GetConfigResult) => {
+        try {
+            const configJson = JSON.stringify(values, null, 2);
+            const res = await SetConfig(configJson);
+            if (res.length == 0) {
+                message.success('配置更新成功');
+            } else {
+                message.error(res);
+            }
+        } catch (error) {
+            console.error("更新配置时出错:", error);
+            message.error('更新配置失败');
+        }
     };
 
     if (loading) {
@@ -56,17 +66,19 @@ const ViewConfig: React.FC = () => {
     return (
         <div style={{ maxWidth: '600px', margin: '0 auto', position: 'relative' }}>
             <Title level={2} style={{ marginBottom: '20px' }}>配置一览</Title>
-            <Button 
-                type="primary" 
-                onClick={() => form.submit()} 
-                style={{ 
-                    position: 'absolute', 
-                    top: '0', 
-                    right: '0'
-                }}
-            >
-                更新配置
-            </Button>
+            <Tooltip title="建议使用默认配置以获得最佳性能">
+                <Button
+                    type="primary"
+                    onClick={() => form.submit()}
+                    style={{
+                        position: 'absolute',
+                        top: '0',
+                        right: '0'
+                    }}
+                >
+                    更新配置
+                </Button>
+            </Tooltip>
             {config && config.Config && (
                 <Form
                     form={form}
@@ -82,7 +94,7 @@ const ViewConfig: React.FC = () => {
                                 label={
                                     <span>
                                         启用书源
-                                        <Tooltip title="只能选一个, 当前可选值：1、2、3">
+                                        <Tooltip title="只能选一个, 当前可选值：1、2、3，建议使用默认书源 3">
                                             <QuestionCircleOutlined style={{ marginLeft: 4 }} />
                                         </Tooltip>
                                     </span>

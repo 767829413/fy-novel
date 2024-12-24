@@ -11,16 +11,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type GetConf struct {
+type ConfHandler struct {
 	log *logrus.Logger
 }
 
-func NewGetConf(l *logrus.Logger) *GetConf {
-	return &GetConf{log: l}
+func NewGetConf(l *logrus.Logger) *ConfHandler {
+	return &ConfHandler{log: l}
 }
 
-func (p *GetConf) GetConfig() config.Info {
+func (p *ConfHandler) GetConfig() config.Info {
 	return config.GetConf()
+}
+
+func (p *ConfHandler) SetConfig(conf string) error {
+	return config.SetConf(conf)
 }
 
 type GetHint struct {
