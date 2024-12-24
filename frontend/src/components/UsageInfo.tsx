@@ -63,10 +63,11 @@ const UsageInfo: React.FC = () => {
                 </Text>
             </div>
             <Descriptions bordered column={1}>
+                <Descriptions.Item label="免责声明">此程序乃作者研习Go语言之练习项目，倘使用中有何问题，皆与作者无关！！！</Descriptions.Item>
                 <Descriptions.Item label="官方地址">{usageInfo.Address}</Descriptions.Item>
                 <Descriptions.Item label="当前书源">{usageInfo.CurrentBookSource}</Descriptions.Item>
                 <Descriptions.Item label="导出格式">{usageInfo.ExportFormat}</Descriptions.Item>
-                <Descriptions.Item label="免责声明">此程序乃作者研习Go语言之练习项目，倘使用中有何问题，皆与作者无关！！！</Descriptions.Item>
+                <Descriptions.Item label="注意事项">有些不支持梯子访问哦！！！</Descriptions.Item>
             </Descriptions>
         </Space>
     );
