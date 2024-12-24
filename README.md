@@ -1,5 +1,6 @@
 # fy-novel
 
+[English](./doc/README_EN.md) | 中文
 ## 介绍
 
 用户欲免费阅新书且求最佳阅读体验者之所需。
