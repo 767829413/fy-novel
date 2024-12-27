@@ -212,7 +212,32 @@ const ViewConfig: React.FC = () => {
                             </span>
                         }
                     >
-                        <Input />
+                        <Select
+                            style={{ width: '100%' }}
+                            options={[
+                                { value: "llama3.3" },
+                                { value: "llama3.2" },
+                                { value: "llama3.2:1b" },
+                                { value: "llama3.2-vision" },
+                                { value: "llama3.2-vision:90b" },
+                                { value: "llama3.1" },
+                                { value: "llama3.1:405b" },
+                                { value: "phi3" },
+                                { value: "phi3:medium" },
+                                { value: "gemma2:2b" },
+                                { value: "gemma2" },
+                                { value: "gemma2:27b" },
+                                { value: "mistral" },
+                                { value: "moondream" },
+                                { value: "neural-chat" },
+                                { value: "starling-lm" },
+                                { value: "codellama" },
+                                { value: "llama2-uncensored" },
+                                { value: "llava" },
+                                { value: "solar" },
+                                { value: "llama2" },
+                            ].map(option => ({ value: option.value, label: option.value }))}
+                        />
                     </Form.Item>
                 </>
             )

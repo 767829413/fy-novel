@@ -89,6 +89,22 @@ export namespace model {
 		    return a;
 		}
 	}
+	export class GetSetOllamaModelProgressResult {
+	    Exists: boolean;
+	    Completed: number;
+	    Total: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new GetSetOllamaModelProgressResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Exists = source["Exists"];
+	        this.Completed = source["Completed"];
+	        this.Total = source["Total"];
+	    }
+	}
 	export class GetUpdateInfoResult {
 	    ErrorMsg: string;
 	    NeedUpdate: boolean;
@@ -127,6 +143,48 @@ export namespace model {
 	        this.ExportFormat = source["ExportFormat"];
 	    }
 	}
+	export class HasInitOllamaResult {
+	    Has: boolean;
+	    ErrorMsg: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new HasInitOllamaResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Has = source["Has"];
+	        this.ErrorMsg = source["ErrorMsg"];
+	    }
+	}
+	export class InitOllamaProgressResult {
+	    Exists: boolean;
+	    Completed: number;
+	    Total: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new InitOllamaProgressResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Exists = source["Exists"];
+	        this.Completed = source["Completed"];
+	        this.Total = source["Total"];
+	    }
+	}
+	export class InitOllamaResult {
+	    ErrorMsg: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new InitOllamaResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ErrorMsg = source["ErrorMsg"];
+	    }
+	}
 	export class ProgressResult {
 	    Exists: boolean;
 	    Completed: number;
@@ -163,6 +221,18 @@ export namespace model {
 	        this.intro = source["intro"];
 	        this.latestChapter = source["latestChapter"];
 	        this.latestUpdate = source["latestUpdate"];
+	    }
+	}
+	export class SetOllamaModelResult {
+	    ErrorMsg: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SetOllamaModelResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ErrorMsg = source["ErrorMsg"];
 	    }
 	}
 	export class StartChatbotResult {

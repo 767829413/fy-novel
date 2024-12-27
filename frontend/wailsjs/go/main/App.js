@@ -14,6 +14,14 @@ export function GetDownloadProgress(arg1) {
   return window['go']['main']['App']['GetDownloadProgress'](arg1);
 }
 
+export function GetInitOllamaProgress() {
+  return window['go']['main']['App']['GetInitOllamaProgress']();
+}
+
+export function GetSetOllamaModelProgress() {
+  return window['go']['main']['App']['GetSetOllamaModelProgress']();
+}
+
 export function GetUpdateInfo() {
   return window['go']['main']['App']['GetUpdateInfo']();
 }
@@ -22,12 +30,24 @@ export function GetUsageInfo() {
   return window['go']['main']['App']['GetUsageInfo']();
 }
 
+export function HasInitOllama() {
+  return window['go']['main']['App']['HasInitOllama']();
+}
+
+export function InitOllama() {
+  return window['go']['main']['App']['InitOllama']();
+}
+
 export function SerachNovel(arg1) {
   return window['go']['main']['App']['SerachNovel'](arg1);
 }
 
 export function SetConfig(arg1) {
   return window['go']['main']['App']['SetConfig'](arg1);
+}
+
+export function SetOllamaModel(arg1) {
+  return window['go']['main']['App']['SetOllamaModel'](arg1);
 }
 
 export function StartChatbot(arg1) {

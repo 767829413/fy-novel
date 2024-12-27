@@ -3,6 +3,9 @@ package functions
 import (
 	"context"
 	"fmt"
+	"fy-novel/internal/config"
+	ollamaTool "fy-novel/internal/tools/ollama"
+	progressTool "fy-novel/internal/tools/progress"
 
 	"github.com/sirupsen/logrus"
 	"github.com/tmc/langchaingo/llms"
@@ -17,8 +20,29 @@ func NewFyChatbot(l *logrus.Logger) *FyChatbot {
 	return &FyChatbot{log: l}
 }
 
+func (f *FyChatbot) FindOllamaContainer(ctx context.Context) (bool, error) {
+	return ollamaTool.FindOllamaContainer(ctx)
+}
+
+func (f *FyChatbot) InitOllama(ctx context.Context) error {
+	return ollamaTool.InitOllamaContainer(ctx)
+}
+
+func (f *FyChatbot) GetInitOllamaProgress(ctx context.Context) (int64, int64, bool) {
+	return progressTool.GetProgress(ollamaTool.OllamaInitConTaskKey)
+}
+
+func (f *FyChatbot) SetOllamaModel(ctx context.Context, model string) error {
+	return ollamaTool.OllamaContainerSetModel(ctx, model)
+}
+
+func (f *FyChatbot) GetSetOllamaModelProgress(ctx context.Context) (int64, int64, bool) {
+	return progressTool.GetProgress(ollamaTool.OllamaInitConSetModelTaskKey)
+}
+
 func (f *FyChatbot) StartChatbot(ctx context.Context, userInput string) (string, error) {
-	llm, err := ollama.New(ollama.WithModel("llama2"))
+	conf := config.GetConf()
+	llm, err := ollama.New(ollama.WithModel(conf.Chatbot.Model))
 
 	if err != nil {
 		return "", fmt.Errorf("failed to create Ollama client after multiple attempts: %w", err)

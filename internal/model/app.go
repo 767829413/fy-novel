@@ -29,6 +29,31 @@ type ProgressResult struct {
 	Total     int
 }
 
+type HasInitOllamaResult struct {
+	Has      bool
+	ErrorMsg string
+}
+
+type InitOllamaResult struct {
+	ErrorMsg string
+}
+
+type InitOllamaProgressResult struct {
+	Exists    bool
+	Completed int
+	Total     int
+}
+
+type SetOllamaModelResult struct {
+	ErrorMsg string
+}
+
+type GetSetOllamaModelProgressResult struct {
+	Exists    bool
+	Completed int
+	Total     int
+}
+
 type StartChatbotResult struct {
 	Response string
 	ErrorMsg string

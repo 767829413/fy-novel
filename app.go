@@ -109,3 +109,62 @@ func (a *App) StartChatbot(userInput string) *model.StartChatbotResult {
 	res.Response = resp
 	return res
 }
+
+func (a *App) HasInitOllama() *model.HasInitOllamaResult {
+	res := &model.HasInitOllamaResult{}
+	has, err := a.chatbot.FindOllamaContainer(a.ctx)
+	if err != nil {
+		errMsg := fmt.Sprintf("app HasInitOllama error: %v", err)
+		a.log.Error(errMsg)
+		res.ErrorMsg = errMsg
+		return res
+	}
+	res.Has = has
+	return res
+}
+
+func (a *App) InitOllama() *model.InitOllamaResult {
+	res := &model.InitOllamaResult{}
+	err := a.chatbot.InitOllama(a.ctx)
+	if err != nil {
+		errMsg := fmt.Sprintf("app InitOllama error: %v", err)
+		a.log.Error(errMsg)
+		res.ErrorMsg = errMsg
+		return res
+	}
+	return res
+}
+
+func (a *App) GetInitOllamaProgress() *model.InitOllamaProgressResult {
+	res := &model.InitOllamaProgressResult{}
+	completed, total, exists := a.chatbot.GetInitOllamaProgress(a.ctx)
+	if exists {
+		res.Exists = exists
+		res.Completed = int(completed)
+		res.Total = int(total)
+	}
+	return res
+}
+
+func (a *App) SetOllamaModel(modelName string) *model.SetOllamaModelResult {
+	res := &model.SetOllamaModelResult{}
+	err := a.chatbot.SetOllamaModel(a.ctx, modelName)
+	if err != nil {
+		errMsg := fmt.Sprintf("app SetOllamaModel error: %v", err)
+		a.log.Error(errMsg)
+		res.ErrorMsg = errMsg
+		return res
+	}
+	return res
+}
+
+func (a *App) GetSetOllamaModelProgress() *model.GetSetOllamaModelProgressResult {
+	res := &model.GetSetOllamaModelProgressResult{}
+	completed, total, exists := a.chatbot.GetSetOllamaModelProgress(a.ctx)
+	if exists {
+		res.Exists = exists
+		res.Completed = int(completed)
+		res.Total = int(total)
+	}
+	return res
+}

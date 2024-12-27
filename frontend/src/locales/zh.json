@@ -88,6 +88,13 @@
     "notesContent": "有些不支持梯子访问哦！！！"
   },
   "chatbot": {
+    "initializationRequired": "需要初始化",
+    "initialize": "初始化",
+    "initializationDescription": "Ollama 需要在使用前进行初始化。这可能需要几分钟时间。",
+    "checkInitError": "检查 Ollama 初始化时出错",
+    "initError": "初始化 Ollama 时出错",
+    "dockerRequired": "需要 Docker",
+    "dockerDescription": "此聊天机器人需要在您的本地机器上安装并运行 Docker。请在使用此功能之前确保已设置 Docker。",
     "title": "聊天机器人",
     "inputPlaceholder": "输入你的消息...",
     "send": "发送",
