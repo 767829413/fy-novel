@@ -5,6 +5,7 @@
       "checkUpdate": "Check Update",
       "viewConfig": "View Configuration",
       "usageInfo": "Usage Information",
+      "chatbot": "Chatbot",
       "selectOption": "Please select an option"
     },
     "footer": "I'm a slacker ©{{year}} Created by Hehehe"
@@ -32,7 +33,11 @@
     "crawlThreads": "Crawl Threads",
     "crawlThreadsTooltip": "-1 means automatic setting, setting too high may trigger anti-crawling mechanisms",
     "maxRetries": "Maximum Retries",
-    "maxRetriesTooltip": "For chapters that fail on first download attempt"
+    "maxRetriesTooltip": "For chapters that fail on first download attempt",
+    "chatbotSettings": "Chatbot Settings",
+    "chatbotSupportInfo": "Note: The current configuration only supports Ollama, switching models may result in a download of the",
+    "model": "model",
+    "modelTooltip": "Ollama supports a list of models available on https://ollama.com/library"
   },
   "checkUpdate": {
     "title": "Check Update",
@@ -81,5 +86,16 @@
     "exportFormat": "Export Format",
     "notes": "Notes",
     "notesContent": "Some sources do not support proxy access!!!"
+  },
+  "chatbot": {
+    "title": "Chatbot",
+    "inputPlaceholder": "Enter your message...",
+    "send": "Send",
+    "invalidResponse": "Chatbot API response is missing or invalid.",
+    "apiError": "Sorry, the chatbot encountered an issue: {{error}}",
+    "networkError": "Sorry, there was a network connection problem. Please check your internet connection and try again.",
+    "generalError": "Sorry, an error occurred: {{error}}",
+    "unknownError": "Sorry, an unknown error occurred. Please try again later.",
+    "errorMessage": "Sorry, an error occurred. Please try again later."
   }
 }

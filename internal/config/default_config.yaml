@@ -15,3 +15,8 @@ crawl:
 retry:
   # 最大重试次数 (针对首次下载失败的章节)
   max-attempts: 3
+
+ # 聊天机器人, 目前只提供 ollama
+chatbot:
+  # 模型选择：根据自己电脑配置来：至少有 8 GB 的 RAM 来运行 7B 型号，16 GB 的 RAM 来运行 13B 的型号，32 GB 的 RAM 来运行 33B 型号
+  model: "llama2"

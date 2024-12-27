@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GetConfig, SetConfig } from "../../wailsjs/go/main/App.js"
 import { model } from "../../wailsjs/go/models";
-import { Spin, Typography, Form, Input, Slider, Button, message, Select, Tooltip, Tabs, InputNumber } from 'antd';
+import { Spin, Typography, Form, Input, Slider, Button, message, Select, Tooltip, Tabs, InputNumber, Alert } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
@@ -188,6 +188,33 @@ const ViewConfig: React.FC = () => {
                 >
                     <InputNumber min={0} />
                 </Form.Item>
+            )
+        },
+        {
+            key: '4',
+            label: t('viewConfig.chatbotSettings'),
+            children: (
+                <>
+                    <Alert
+                        message={t('viewConfig.chatbotSupportInfo')}
+                        type="info"
+                        showIcon
+                        style={{ marginBottom: 16 }}
+                    />
+                    <Form.Item
+                        name={["chatbot", "model"]}
+                        label={
+                            <span>
+                                {t('viewConfig.model')}
+                                <Tooltip title={t('viewConfig.modelTooltip')}>
+                                    <QuestionCircleOutlined style={{ marginLeft: 4 }} />
+                                </Tooltip>
+                            </span>
+                        }
+                    >
+                        <Input />
+                    </Form.Item>
+                </>
             )
         }
     ];

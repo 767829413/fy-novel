@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"fy-novel/internal/functions"
 	"fy-novel/internal/model"
 	progressTool "fy-novel/internal/tools/progress"
@@ -18,6 +19,7 @@ type App struct {
 	downloader   *functions.Downloader
 	confHandler  *functions.ConfHandler
 	getHint      *functions.GetHint
+	chatbot      *functions.FyChatbot
 }
 
 // NewApp creates a new App application struct
@@ -41,6 +43,7 @@ func (a *App) startup(ctx context.Context) {
 	a.downloader = functions.NewDownload(log)
 	a.confHandler = functions.NewGetConf(log)
 	a.getHint = functions.NewGetHint(log)
+	a.chatbot = functions.NewFyChatbot(log)
 	a.log = log
 }
 
@@ -92,4 +95,17 @@ func (a *App) SetConfig(conf string) string {
 		return err.Error()
 	}
 	return ""
+}
+
+func (a *App) StartChatbot(userInput string) *model.StartChatbotResult {
+	res := &model.StartChatbotResult{}
+	resp, err := a.chatbot.StartChatbot(a.ctx, userInput)
+	if err != nil {
+		errMsg := fmt.Sprintf("app StartChatbot error: %v", err)
+		a.log.Error(errMsg)
+		res.ErrorMsg = errMsg
+		return res
+	}
+	res.Response = resp
+	return res
 }

@@ -32,13 +32,16 @@ type Info struct {
 		DownloadPath string `mapstructure:"download-path" json:"download-path"`
 		Extname      string `mapstructure:"extname" json:"extname"`
 		LogLevel     string `mapstructure:"log-level" json:"log-level"`
-	} `mapstructure:"base"  json:"base"`
+	} `mapstructure:"base"    json:"base"`
 	Crawl struct {
 		Threads int `mapstructure:"threads" json:"threads"`
-	} `mapstructure:"crawl" json:"crawl"`
+	} `mapstructure:"crawl"   json:"crawl"`
 	Retry struct {
 		MaxAttempts int `mapstructure:"max-attempts" json:"max-attempts"`
-	} `mapstructure:"retry" json:"retry"`
+	} `mapstructure:"retry"   json:"retry"`
+	Chatbot struct {
+		Model string `mapstructure:"model" json:"model"`
+	} `mapstructure:"chatbot" json:"chatbot"`
 }
 
 func init() {
@@ -145,6 +148,12 @@ func SetConf(conf string) error {
 	if newConf.Retry.MaxAttempts != 0 &&
 		newConf.Retry.MaxAttempts != currentConf.Retry.MaxAttempts {
 		currentConf.Retry.MaxAttempts = newConf.Retry.MaxAttempts
+		updated = true
+	}
+
+	// Update Chatbot fields
+	if newConf.Chatbot.Model != "" && newConf.Chatbot.Model != currentConf.Chatbot.Model {
+		currentConf.Chatbot.Model = newConf.Chatbot.Model
 		updated = true
 	}
 

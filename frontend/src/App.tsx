@@ -7,6 +7,7 @@ import DownloadNovel from './components/DownloadNovel';
 import CheckUpdate from './components/CheckUpdate';
 import ViewConfig from './components/ViewConfig';
 import UsageInfo from './components/UsageInfo';
+import Chatbot from './components/Chatbot';
 import LanguageSwitcher from './components/LanguageSwitcher';
 
 const { Header, Content, Footer } = Layout;
@@ -21,9 +22,10 @@ const App: React.FC = () => {
 
     const options = [
         { key: '0', label: t('app.menu.downloadNovel') },
-        { key: '1', label: t('app.menu.checkUpdate') },
-        { key: '2', label: t('app.menu.viewConfig') },
-        { key: '3', label: t('app.menu.usageInfo') },
+        { key: '1', label: t('app.menu.chatbot') },
+        { key: '2', label: t('app.menu.checkUpdate') },
+        { key: '3', label: t('app.menu.viewConfig') },
+        { key: '4', label: t('app.menu.usageInfo') },
     ];
 
     const handleMenuClick = (e: any) => {
@@ -40,10 +42,12 @@ const App: React.FC = () => {
                     </DownloadProvider>
                 );
             case 1:
-                return <CheckUpdate />;
+                return <Chatbot />;
             case 2:
-                return <ViewConfig />;
+                return <CheckUpdate />;
             case 3:
+                return <ViewConfig />;
+            case 4:
                 return <UsageInfo />;
             default:
                 return <p>{t('app.menu.selectOption')}</p>;

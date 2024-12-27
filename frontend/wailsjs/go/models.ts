@@ -7,6 +7,8 @@ export namespace config {
 	    crawl: any;
 	    // Go type: struct { MaxAttempts int "mapstructure:\"max-attempts\" json:\"max-attempts\"" }
 	    retry: any;
+	    // Go type: struct { Model string "mapstructure:\"model\" json:\"model\"" }
+	    chatbot: any;
 	
 	    static createFrom(source: any = {}) {
 	        return new Info(source);
@@ -17,6 +19,7 @@ export namespace config {
 	        this.base = this.convertValues(source["base"], Object);
 	        this.crawl = this.convertValues(source["crawl"], Object);
 	        this.retry = this.convertValues(source["retry"], Object);
+	        this.chatbot = this.convertValues(source["chatbot"], Object);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -160,6 +163,20 @@ export namespace model {
 	        this.intro = source["intro"];
 	        this.latestChapter = source["latestChapter"];
 	        this.latestUpdate = source["latestUpdate"];
+	    }
+	}
+	export class StartChatbotResult {
+	    Response: string;
+	    ErrorMsg: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new StartChatbotResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Response = source["Response"];
+	        this.ErrorMsg = source["ErrorMsg"];
 	    }
 	}
 

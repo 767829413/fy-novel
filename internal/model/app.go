@@ -1,6 +1,8 @@
 package model
 
-import "fy-novel/internal/config"
+import (
+	"fy-novel/internal/config"
+)
 
 type GetUsageInfoResult struct {
 	VersionInfo       string
@@ -25,4 +27,9 @@ type ProgressResult struct {
 	Exists    bool
 	Completed int
 	Total     int
+}
+
+type StartChatbotResult struct {
+	Response string
+	ErrorMsg string
 }

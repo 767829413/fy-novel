@@ -29,3 +29,7 @@ export function SerachNovel(arg1) {
 export function SetConfig(arg1) {
   return window['go']['main']['App']['SetConfig'](arg1);
 }
+
+export function StartChatbot(arg1) {
+  return window['go']['main']['App']['StartChatbot'](arg1);
+}

@@ -15,3 +15,5 @@ export function GetUsageInfo():Promise<model.GetUsageInfoResult>;
 export function SerachNovel(arg1:string):Promise<Array<model.SearchResult>>;
 
 export function SetConfig(arg1:string):Promise<string>;
+
+export function StartChatbot(arg1:string):Promise<model.StartChatbotResult>;

@@ -5,6 +5,7 @@
       "checkUpdate": "检查更新",
       "viewConfig": "查看配置文件",
       "usageInfo": "使用须知",
+      "chatbot": "聊天机器人",
       "selectOption": "请选择一个选项"
     },
     "footer": "我是混子 ©{{year}} Created by 呵呵呵"
@@ -32,7 +33,11 @@
     "crawlThreads": "爬取线程数",
     "crawlThreadsTooltip": "-1 表示自动设置，设置过大会引发防爬机制",
     "maxRetries": "最大重试次数",
-    "maxRetriesTooltip": "针对首次下载失败的章节"
+    "maxRetriesTooltip": "针对首次下载失败的章节",
+    "chatbotSettings": "聊天机器人设置",
+    "chatbotSupportInfo": "注意：当前配置仅支持 Ollama，切换模型可能会导致下载",
+    "model": "模型",
+    "modelTooltip": "Ollama 支持 https://ollama.com/library 上可用的模型列表"
   },
   "checkUpdate": {
     "title": "检查更新",
@@ -81,5 +86,16 @@
     "exportFormat": "导出格式",
     "notes": "注意事项",
     "notesContent": "有些不支持梯子访问哦！！！"
+  },
+  "chatbot": {
+    "title": "聊天机器人",
+    "inputPlaceholder": "输入你的消息...",
+    "send": "发送",
+    "invalidResponse": "聊天机器人 API 响应缺失或无效。",
+    "apiError": "抱歉，聊天机器人出现了问题：{{error}}",
+    "networkError": "抱歉，网络连接出现问题。请检查您的网络连接并重试。",
+    "generalError": "抱歉，发生了错误：{{error}}",
+    "unknownError": "抱歉，发生了未知错误。请稍后再试。",
+    "errorMessage": "抱歉，发生了错误。请稍后再试。"
   }
 }
