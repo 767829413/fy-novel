@@ -6,9 +6,13 @@ export function DownLoadNovel(arg1:model.SearchResult):Promise<model.CrawlResult
 
 export function GetConfig():Promise<model.GetConfigResult>;
 
+export function GetCurrentUseModel():Promise<model.GetCurrentUseModelResult>;
+
 export function GetDownloadProgress(arg1:model.SearchResult):Promise<model.ProgressResult>;
 
 export function GetInitOllamaProgress():Promise<model.InitOllamaProgressResult>;
+
+export function GetSelectModelList():Promise<model.GetSelectModelListResult>;
 
 export function GetSetOllamaModelProgress():Promise<model.GetSetOllamaModelProgressResult>;
 

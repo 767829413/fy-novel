@@ -88,6 +88,8 @@
     "notesContent": "Some sources do not support proxy access!!!"
   },
   "chatbot": {
+    "clear": "Clear",
+    "currentModel": "Current Model",
     "initializationRequired": "Initialization Required",
     "initialize": "Initialize",
     "initializationDescription": "Ollama needs to be initialized before use. This may take a few minutes.",
@@ -103,6 +105,31 @@
     "networkError": "Sorry, there was a network connection problem. Please check your internet connection and try again.",
     "generalError": "Sorry, an error occurred: {{error}}",
     "unknownError": "Sorry, an unknown error occurred. Please try again later.",
-    "errorMessage": "Sorry, an error occurred. Please try again later."
+    "errorMessage": "Sorry, an error occurred. Please try again later.",
+    "initModalTitle": "Initialize Ollama",
+    "initModalContent": "Ollama needs to be initialized before chatting. Do you want to initialize now?",
+    "initModalOk": "Initialize",
+    "initModalCancel": "Cancel",
+    "assistant": "Assistant",
+    "sendError": "Error sending message",
+    "progressCheckError": "Error checking initialization progress",
+    "confirmModelChange": "Confirm model change?",
+    "modelChangeWarning": "Changing the model may require downloading new model files, which could be a time-consuming operation. Do you want to continue?",
+    "noModelError": "No model returned",
+    "getCurrentModelError": "Error getting current model",
+    "noModelListError": "No model list returned",
+    "getModelListError": "Error getting model list",
+    "changeModelError": "Error changing model",
+    "modelChangeProgressError": "Error checking model change progress",
+    "selectModel": "Select model",
+    "modelChangeSuccess": "Model Switching Successful",
+    "modelResetWarning": "You are about to reset the current model. This may help if the previous change was interrupted. Do you want to continue?",
+    "changingModel": "Model switching...",
+    "prerequisiteTitle": "Prerequisites",
+    "prerequisiteDescription": "To use this chatbot, you need to meet the following requirements:",
+    "prerequisiteDocker": "Docker installed",
+    "prerequisiteOllama": "Ability to pull the ollama/ollama image",
+    "prerequisiteWarning": "If you haven't met these conditions, please complete the relevant setup first.",
+    "checkingStatus": "Checking status..."
   }
 }

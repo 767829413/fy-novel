@@ -20,8 +20,25 @@ func NewFyChatbot(l *logrus.Logger) *FyChatbot {
 	return &FyChatbot{log: l}
 }
 
-func (f *FyChatbot) FindOllamaContainer(ctx context.Context) (bool, error) {
-	return ollamaTool.FindOllamaContainer(ctx)
+func (f *FyChatbot) FindOllamaContainer(
+	ctx context.Context,
+) (has bool, isInit bool, isSetModel bool, err error) {
+
+	// 首先判断是不是已经在设置模型了
+	completedInit, totalInit, existsInit := progressTool.GetProgress(
+		ollamaTool.OllamaInitConTaskKey,
+	)
+	isInit = (existsInit && (completedInit < totalInit))
+	completedModel, totalModel, existsModel := progressTool.GetProgress(
+		ollamaTool.OllamaInitConSetModelTaskKey,
+	)
+	isSetModel = (existsModel && (completedModel < totalModel))
+	if !isInit || !isSetModel {
+		has, err = ollamaTool.FindOllamaContainer(ctx)
+	} else {
+		has = true
+	}
+	return has, isInit, isSetModel, err
 }
 
 func (f *FyChatbot) InitOllama(ctx context.Context) error {
@@ -34,6 +51,15 @@ func (f *FyChatbot) GetInitOllamaProgress(ctx context.Context) (int64, int64, bo
 
 func (f *FyChatbot) SetOllamaModel(ctx context.Context, model string) error {
 	return ollamaTool.OllamaContainerSetModel(ctx, model)
+}
+
+func (f *FyChatbot) GetCurrentUseModel(ctx context.Context) string {
+	conf := config.GetConf()
+	return conf.Chatbot.Model
+}
+
+func (f *FyChatbot) GetSelectModelList(ctx context.Context) []string {
+	return ollamaTool.OllamaModelTypes.GetModels()
 }
 
 func (f *FyChatbot) GetSetOllamaModelProgress(ctx context.Context) (int64, int64, bool) {

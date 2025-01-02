@@ -30,8 +30,10 @@ type ProgressResult struct {
 }
 
 type HasInitOllamaResult struct {
-	Has      bool
-	ErrorMsg string
+	Has        bool
+	IsInit     bool
+	IsSetModel bool
+	ErrorMsg   string
 }
 
 type InitOllamaResult struct {
@@ -46,6 +48,14 @@ type InitOllamaProgressResult struct {
 
 type SetOllamaModelResult struct {
 	ErrorMsg string
+}
+
+type GetCurrentUseModelResult struct {
+	Model string
+}
+
+type GetSelectModelListResult struct {
+	Models []string
 }
 
 type GetSetOllamaModelProgressResult struct {

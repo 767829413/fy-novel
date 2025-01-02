@@ -10,12 +10,20 @@ export function GetConfig() {
   return window['go']['main']['App']['GetConfig']();
 }
 
+export function GetCurrentUseModel() {
+  return window['go']['main']['App']['GetCurrentUseModel']();
+}
+
 export function GetDownloadProgress(arg1) {
   return window['go']['main']['App']['GetDownloadProgress'](arg1);
 }
 
 export function GetInitOllamaProgress() {
   return window['go']['main']['App']['GetInitOllamaProgress']();
+}
+
+export function GetSelectModelList() {
+  return window['go']['main']['App']['GetSelectModelList']();
 }
 
 export function GetSetOllamaModelProgress() {

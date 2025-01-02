@@ -14,7 +14,7 @@ import (
 )
 
 type ChapterParser struct {
-	rule *model.Rule
+	rule model.Rule
 }
 
 func NewChapterParser(sourceID int) *ChapterParser {

@@ -8,7 +8,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func filterForChapter(chapter *model.Chapter, rule *model.Rule) string {
+func filterForChapter(chapter *model.Chapter, rule model.Rule) string {
 	return newFilterBuilder(chapter).
 		FilterEscape(true).
 		FilterAds(true).
@@ -46,7 +46,7 @@ func (fb *filterBuilder) FilterDuplicateTitle(apply bool) *filterBuilder {
 	return fb
 }
 
-func (fb *filterBuilder) Build(rule *model.Rule) string {
+func (fb *filterBuilder) Build(rule model.Rule) string {
 	if fb.applyEscapeFilter {
 		re := regexp.MustCompile(`&[^;]+;`)
 		fb.content = re.ReplaceAllString(fb.content, "")

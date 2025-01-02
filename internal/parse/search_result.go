@@ -7,11 +7,12 @@ import (
 	"fy-novel/internal/model"
 	"fy-novel/internal/source"
 	"fy-novel/pkg/utils"
+
 	"github.com/gocolly/colly/v2"
 )
 
 type SearchResultParser struct {
-	rule *model.Rule
+	rule model.Rule
 }
 
 func NewSearchResultParser(sourceID int) *SearchResultParser {
@@ -36,6 +37,10 @@ func (p *SearchResultParser) Parse(keyword string) ([]*model.SearchResult, error
 	)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(firstPageResults) == 0 {
+		return nil, nil
 	}
 
 	if !isPaging {
@@ -122,6 +127,10 @@ func (p *SearchResultParser) getSearchResults(
 
 		results = append(results, result)
 	})
+
+	// collector.OnResponse(func(r *colly.Response) {
+	// 	fmt.Println(string(r.Body))
+	// })
 
 	if method == http.MethodGet {
 		err := collector.Visit(url)

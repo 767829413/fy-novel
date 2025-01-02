@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	maxThreads = 8 // Concurrency greater than this is prone to failure
+	maxThreads = 6 // Concurrency greater than this is prone to failure
 )
 
 var once sync.Once

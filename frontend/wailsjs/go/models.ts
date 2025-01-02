@@ -89,6 +89,30 @@ export namespace model {
 		    return a;
 		}
 	}
+	export class GetCurrentUseModelResult {
+	    Model: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new GetCurrentUseModelResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Model = source["Model"];
+	    }
+	}
+	export class GetSelectModelListResult {
+	    Models: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new GetSelectModelListResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Models = source["Models"];
+	    }
+	}
 	export class GetSetOllamaModelProgressResult {
 	    Exists: boolean;
 	    Completed: number;
@@ -145,6 +169,8 @@ export namespace model {
 	}
 	export class HasInitOllamaResult {
 	    Has: boolean;
+	    IsInit: boolean;
+	    IsSetModel: boolean;
 	    ErrorMsg: string;
 	
 	    static createFrom(source: any = {}) {
@@ -154,6 +180,8 @@ export namespace model {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Has = source["Has"];
+	        this.IsInit = source["IsInit"];
+	        this.IsSetModel = source["IsSetModel"];
 	        this.ErrorMsg = source["ErrorMsg"];
 	    }
 	}

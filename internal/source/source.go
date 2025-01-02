@@ -14,9 +14,10 @@ var ruleFS embed.FS
 
 var ruleCache sync.Map
 
-func GetRuleBySourceID(sourceId int) *model.Rule {
+func GetRuleBySourceID(sourceId int) model.Rule {
+	emptyRule := model.Rule{}
 	if v, ok := ruleCache.Load(sourceId); ok {
-		return v.(*model.Rule)
+		return v.(model.Rule)
 	}
 
 	// Build the file path
@@ -24,17 +25,17 @@ func GetRuleBySourceID(sourceId int) *model.Rule {
 	// Read the file content
 	ruleData, err := ruleFS.ReadFile(filePath)
 	if err != nil {
-		return nil
+		return emptyRule
 	}
 
 	// Parse JSON into Rule struct
 	var rule model.Rule
 	err = json.Unmarshal(ruleData, &rule)
 	if err != nil {
-		return nil
+		return emptyRule
 	}
 
 	// Use LoadOrStore method to ensure thread-safe writing
-	actual, _ := ruleCache.LoadOrStore(sourceId, &rule)
-	return actual.(*model.Rule)
+	actual, _ := ruleCache.LoadOrStore(sourceId, rule)
+	return actual.(model.Rule)
 }

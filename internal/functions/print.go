@@ -49,6 +49,5 @@ func (p *GetHint) GetUsageInfo() *model.GetUsageInfoResult {
 		CurrentBookSource: fmt.Sprintf("%s (ID: %d)", rule.URL, cfg.Base.SourceID),
 		ExportFormat:      cfg.Base.Extname,
 	}
-
 	return res
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GetConfig, SetConfig } from "../../wailsjs/go/main/App.js"
 import { model } from "../../wailsjs/go/models";
-import { Spin, Typography, Form, Input, Slider, Button, message, Select, Tooltip, Tabs, InputNumber, Alert } from 'antd';
+import { Spin, Typography, Form, Input, Slider, Button, message, Select, Tooltip, Tabs, InputNumber } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
@@ -86,6 +86,7 @@ const ViewConfig: React.FC = () => {
                             options={[
                                 { value: 1, label: '1' },
                                 { value: 2, label: '2' },
+                                { value: 3, label: '3' },
                             ]}
                             style={{ width: '100%' }}
                         />
@@ -188,58 +189,6 @@ const ViewConfig: React.FC = () => {
                 >
                     <InputNumber min={0} />
                 </Form.Item>
-            )
-        },
-        {
-            key: '4',
-            label: t('viewConfig.chatbotSettings'),
-            children: (
-                <>
-                    <Alert
-                        message={t('viewConfig.chatbotSupportInfo')}
-                        type="info"
-                        showIcon
-                        style={{ marginBottom: 16 }}
-                    />
-                    <Form.Item
-                        name={["chatbot", "model"]}
-                        label={
-                            <span>
-                                {t('viewConfig.model')}
-                                <Tooltip title={t('viewConfig.modelTooltip')}>
-                                    <QuestionCircleOutlined style={{ marginLeft: 4 }} />
-                                </Tooltip>
-                            </span>
-                        }
-                    >
-                        <Select
-                            style={{ width: '100%' }}
-                            options={[
-                                { value: "llama3.3" },
-                                { value: "llama3.2" },
-                                { value: "llama3.2:1b" },
-                                { value: "llama3.2-vision" },
-                                { value: "llama3.2-vision:90b" },
-                                { value: "llama3.1" },
-                                { value: "llama3.1:405b" },
-                                { value: "phi3" },
-                                { value: "phi3:medium" },
-                                { value: "gemma2:2b" },
-                                { value: "gemma2" },
-                                { value: "gemma2:27b" },
-                                { value: "mistral" },
-                                { value: "moondream" },
-                                { value: "neural-chat" },
-                                { value: "starling-lm" },
-                                { value: "codellama" },
-                                { value: "llama2-uncensored" },
-                                { value: "llava" },
-                                { value: "solar" },
-                                { value: "llama2" },
-                            ].map(option => ({ value: option.value, label: option.value }))}
-                        />
-                    </Form.Item>
-                </>
             )
         }
     ];

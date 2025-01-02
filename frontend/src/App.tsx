@@ -1,5 +1,6 @@
 import './i18n';
 import React, { useState } from 'react';
+import { ModelChangeProvider } from './context/ModelChangeContext';
 import { Layout, Menu, theme } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { DownloadProvider } from './context/DownloadContext';
@@ -42,7 +43,11 @@ const App: React.FC = () => {
                     </DownloadProvider>
                 );
             case 1:
-                return <Chatbot />;
+                return (
+                    <ModelChangeProvider>
+                        <Chatbot />
+                    </ModelChangeProvider>
+                );
             case 2:
                 return <CheckUpdate />;
             case 3:

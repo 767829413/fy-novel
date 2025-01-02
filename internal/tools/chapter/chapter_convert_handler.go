@@ -8,7 +8,7 @@ import (
 func ConvertChapter(
 	chapter *model.Chapter,
 	extName string,
-	rule *model.Rule,
+	rule model.Rule,
 ) error {
 	var content string
 	var err error

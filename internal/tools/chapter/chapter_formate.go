@@ -7,7 +7,7 @@ import (
 	"fy-novel/internal/model"
 )
 
-func formatForChapter(content string, rule *model.Rule) string {
+func formatForChapter(content string, rule model.Rule) string {
 	if rule.Chapter.ParagraphTagClosed {
 		if rule.Chapter.ParagraphTag == "p" {
 			return content

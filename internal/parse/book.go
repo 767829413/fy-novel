@@ -9,7 +9,7 @@ import (
 )
 
 type BookParser struct {
-	rule *model.Rule
+	rule model.Rule
 }
 
 func NewBookParser(sourceID int) *BookParser {

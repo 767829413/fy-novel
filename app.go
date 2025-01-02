@@ -112,7 +112,7 @@ func (a *App) StartChatbot(userInput string) *model.StartChatbotResult {
 
 func (a *App) HasInitOllama() *model.HasInitOllamaResult {
 	res := &model.HasInitOllamaResult{}
-	has, err := a.chatbot.FindOllamaContainer(a.ctx)
+	has, isInit, isSetModel, err := a.chatbot.FindOllamaContainer(a.ctx)
 	if err != nil {
 		errMsg := fmt.Sprintf("app HasInitOllama error: %v", err)
 		a.log.Error(errMsg)
@@ -120,6 +120,8 @@ func (a *App) HasInitOllama() *model.HasInitOllamaResult {
 		return res
 	}
 	res.Has = has
+	res.IsInit = isInit
+	res.IsSetModel = isSetModel
 	return res
 }
 
@@ -155,6 +157,18 @@ func (a *App) SetOllamaModel(modelName string) *model.SetOllamaModelResult {
 		res.ErrorMsg = errMsg
 		return res
 	}
+	return res
+}
+
+func (a *App) GetCurrentUseModel() *model.GetCurrentUseModelResult {
+	res := &model.GetCurrentUseModelResult{}
+	res.Model = a.chatbot.GetCurrentUseModel(a.ctx)
+	return res
+}
+
+func (a *App) GetSelectModelList() *model.GetSelectModelListResult {
+	res := &model.GetSelectModelListResult{}
+	res.Models = a.chatbot.GetSelectModelList(a.ctx)
 	return res
 }
 

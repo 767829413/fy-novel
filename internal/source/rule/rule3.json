@@ -1,0 +1,55 @@
+{
+    "id": "3",
+    "url": "https://69shux.co/",
+    "name": "69书吧",
+    "comment": "无五秒盾、爬取章节有限流、需要梯子，美国节点🆗、数量5w+",
+    "type": "html",
+    "useProxy": true,
+    "language": "zh-Hant",
+    "search": {
+        "url": "https://69shux.co/search",
+        "method": "post",
+        "body": {
+            "kw": "searchkey",
+            "submit": "Search"
+        },
+        "cookies": {
+            "zh_choose": "s"
+        },
+        "pagination": true,
+        "nextPage": "#pagelink > a:not(.pgroup):not(.ngroup):not(.next)",
+        "result": "#article_list_content > li > div.newnav",
+        "bookName": "h3 > a:last-child",
+        "author": "div.labelbox > label:nth-child(1)",
+        "latestChapter": "div.zxzj > p > a",
+        "update": "div.labelbox > label:nth-child(3)"
+    },
+    "book": {
+        "url": "https://69shux.co/book/(.*?).html",
+        "bookName": "meta[property=\"og:novel:book_name\"]",
+        "author": "meta[property=\"og:novel:author\"]",
+        "intro": "meta[property=\"og:description\"]",
+        "category": "meta[property=\"og:novel:category\"]",
+        "coverUrl": ".bookimg2 > img",
+        "latestChapter": "meta[property=\"og:novel:latest_chapter_name\"]",
+        "latestUpdate": "meta[property=\"og:novel:update_time\"]",
+        "isEnd": "meta[property=\"og:novel:status\"]"
+    },
+    "catalog": {
+        "url": "https://69shux.co/ajax_novels/chapterlist/%s.html",
+        "result": "ul > li > a",
+        "offset": 0
+    },
+    "chapter": {
+        "url": "https://69shux.co/txt/%s/%s.html",
+        "pagination": false,
+        "nextPage": "",
+        "chapterNo": 0,
+        "title": "",
+        "content": "#txtcontent",
+        "paragraphTagClosed": false,
+        "paragraphTag": "<br><br>",
+        "filterTxt": "",
+        "filterTag": "div"
+    }
+}

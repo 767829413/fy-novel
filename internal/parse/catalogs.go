@@ -11,7 +11,7 @@ import (
 )
 
 type CatalogsParser struct {
-	rule *model.Rule
+	rule model.Rule
 }
 
 func NewCatalogsParser(sourceID int) *CatalogsParser {
