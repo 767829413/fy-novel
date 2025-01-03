@@ -22,7 +22,7 @@ import (
 const (
 	ollamaImage   = "ollama/ollama"
 	ollamaPort    = "11434"
-	ollamaVolume  = "/ollama"
+	ollamaVolume  = "/root/.ollama"
 	ollamaMount   = ".ollama"
 	ollamaConName = "ollama"
 
