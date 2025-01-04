@@ -5,19 +5,15 @@ import { HasInitOllama, InitOllama, GetInitOllamaProgress } from '../../wailsjs/
 
 export const useOllamaInitialization = () => {
   const { t } = useTranslation();
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [showInitModal, setShowInitModal] = useState(false);
+  const [showInitModel, setShowInitModal] = useState(false);
   const [initProgress, setInitProgress] = useState(0);
   const [isInitializing, setIsInitializing] = useState(false);
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
-  const [hasContainer, setHasContainer] = useState(false);
 
   const checkInitialization = useCallback(async () => {
     try {
       const result = await HasInitOllama();
-      setHasContainer(result.Has);
       setIsInitializing(result.IsInit);
-      setIsInitialized(result.Has && !result.IsInit);
     } catch (error) {
       console.error('Error checking Ollama initialization:', error);
       message.error(t('chatbot.checkInitError'));
@@ -43,7 +39,6 @@ export const useOllamaInitialization = () => {
         const progressPercentage = Math.min(Math.round((result.Completed / result.Total) * 100), 100);
         setInitProgress(progressPercentage);
         if (progressPercentage >= 100) {
-          setIsInitialized(true);
           setShowInitModal(false);
           setIsInitializing(false);
         }
@@ -66,10 +61,10 @@ export const useOllamaInitialization = () => {
   }, [checkInitialization]);
 
   useEffect(() => {
-    if (!isCheckingStatus && !hasContainer) {
+    if (!isCheckingStatus) {
       setShowInitModal(true);
     }
-  }, [isCheckingStatus, hasContainer]);
+  }, [isCheckingStatus]);
 
   useEffect(() => {
     let intervalId: number | undefined;
@@ -86,12 +81,10 @@ export const useOllamaInitialization = () => {
   }, [isInitializing, checkProgress]);
 
   return {
-    isInitialized,
-    showInitModal,
+    showInitModel,
     initProgress,
     isInitializing,
     isCheckingStatus,
-    hasContainer,
     handleInitialize,
     setShowInitModal,
   };

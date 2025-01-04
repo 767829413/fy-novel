@@ -93,7 +93,7 @@
     "initializationRequired": "需要初始化",
     "initialize": "初始化",
     "initializationDescription": "使用前需要初始化 Ollama。这可能需要几分钟时间。",
-    "checkInitError": "检查 Ollama 初始化时出错",
+    "checkInitError": "检查 Ollama 状态出错",
     "initError": "初始化 Ollama 时出错",
     "dockerRequired": "需要 Docker",
     "dockerDescription": "此聊天机器人需要在您的本地机器上安装并运行 Docker。请在使用此功能之前确保已设置好 Docker。",

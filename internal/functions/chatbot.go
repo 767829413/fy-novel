@@ -41,16 +41,16 @@ func (f *FyChatbot) FindOllamaContainer(
 	return has, isInit, isSetModel, err
 }
 
-func (f *FyChatbot) InitOllama(ctx context.Context) error {
-	return ollamaTool.InitOllamaContainer(ctx)
+func (f *FyChatbot) InitOllama(ctx context.Context) {
+	go ollamaTool.InitOllamaContainer(ctx)
 }
 
 func (f *FyChatbot) GetInitOllamaProgress(ctx context.Context) (int64, int64, bool) {
 	return progressTool.GetProgress(ollamaTool.OllamaInitConTaskKey)
 }
 
-func (f *FyChatbot) SetOllamaModel(ctx context.Context, model string) error {
-	return ollamaTool.OllamaContainerSetModel(ctx, model)
+func (f *FyChatbot) SetOllamaModel(ctx context.Context, model string) {
+	go ollamaTool.OllamaContainerSetModel(ctx, model)
 }
 
 func (f *FyChatbot) GetCurrentUseModel(ctx context.Context) string {

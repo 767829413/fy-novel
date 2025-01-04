@@ -127,13 +127,7 @@ func (a *App) HasInitOllama() *model.HasInitOllamaResult {
 
 func (a *App) InitOllama() *model.InitOllamaResult {
 	res := &model.InitOllamaResult{}
-	err := a.chatbot.InitOllama(a.ctx)
-	if err != nil {
-		errMsg := fmt.Sprintf("app InitOllama error: %v", err)
-		a.log.Error(errMsg)
-		res.ErrorMsg = errMsg
-		return res
-	}
+	a.chatbot.InitOllama(a.ctx)
 	return res
 }
 
@@ -150,13 +144,7 @@ func (a *App) GetInitOllamaProgress() *model.InitOllamaProgressResult {
 
 func (a *App) SetOllamaModel(modelName string) *model.SetOllamaModelResult {
 	res := &model.SetOllamaModelResult{}
-	err := a.chatbot.SetOllamaModel(a.ctx, modelName)
-	if err != nil {
-		errMsg := fmt.Sprintf("app SetOllamaModel error: %v", err)
-		a.log.Error(errMsg)
-		res.ErrorMsg = errMsg
-		return res
-	}
+	a.chatbot.SetOllamaModel(a.ctx, modelName)
 	return res
 }
 

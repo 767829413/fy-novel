@@ -93,7 +93,7 @@
     "initializationRequired": "Initialization Required",
     "initialize": "Initialize",
     "initializationDescription": "Ollama needs to be initialized before use. This may take a few minutes.",
-    "checkInitError": "Error checking Ollama initialization",
+    "checkInitError": "Error checking Ollama status",
     "initError": "Error initializing Ollama",
     "dockerRequired": "Docker Required",
     "dockerDescription": "This chatbot requires Docker to be installed and running on your local machine. Please ensure Docker is set up before using this feature.",

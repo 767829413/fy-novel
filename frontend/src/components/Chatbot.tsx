@@ -3,9 +3,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Collapse, Card, Input, Button, Typography, Space, message, Modal, Progress, Select, Tag, Alert } from 'antd';
 import { SendOutlined, UserOutlined, RobotOutlined, DeleteOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { StartChatbot } from '../../wailsjs/go/main/App';
-import { useOllamaInitialization } from '../hooks/useOllamaInitialization';
-import { useModelManagement } from '../hooks/useModelManagement';
+import { StartChatbot, HasInitOllama, GetInitOllamaProgress, InitOllama, GetCurrentUseModel, GetSelectModelList, SetOllamaModel, GetSetOllamaModelProgress } from '../../wailsjs/go/main/App';
+import { useModelChange } from '../context/ModelChangeContext';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -23,29 +22,147 @@ const Chatbot: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const {
-        isInitialized,
-        showInitModal,
-        initProgress,
-        isInitializing,
-        isCheckingStatus,
-        hasContainer,
-        handleInitialize,
-        setShowInitModal,
-    } = useOllamaInitialization();
+    // 初始化状态
+    const [showInitModel, setShowInitModal] = useState(false);
+    const [initProgress, setInitProgress] = useState(0);
+    const [isInitializing, setIsInitializing] = useState(false);
+    const [isCheckingStatus, setIsCheckingStatus] = useState(true);
 
-    const {
-        currentModel,
-        modelList,
-        selectedModel,
-        isChangingModel,
-        modelChangeProgress,
-        setSelectedModel,
-        handleModelChange,
-    } = useModelManagement();
+    // 初始化
+    const handleInitialize = useCallback(async () => {
+        setIsInitializing(true);
+        setInitProgress(0);
+        InitOllama();
+    }, [t]);
+
+    const checkProgress = useCallback(async () => {
+        const result = await GetInitOllamaProgress();
+        if (result.Exists) {
+            const progressPercentage = Math.min(Math.round((result.Completed / result.Total) * 100), 100);
+            setInitProgress(progressPercentage);
+            if (progressPercentage >= 100) {
+                setShowInitModal(false);
+                setIsInitializing(false);
+                setIsCheckingStatus(false)
+            }
+        }
+        checkCurrentStatus()
+    }, [t]);
+
+    useEffect(() => {
+        let intervalId: number | undefined;
+
+        if (isInitializing) {
+            intervalId = window.setInterval(checkProgress, 2000);
+        }
+
+        return () => {
+            if (intervalId !== undefined) {
+                window.clearInterval(intervalId);
+            }
+        };
+    }, [isInitializing, checkProgress]);
+
+    // 检查状态
+    const checkCurrentStatus = useCallback(async () => {
+        const result = await HasInitOllama();
+        console.info(result)
+        // 没有容器
+        setShowInitModal(!result.Has);
+        // 正在初始化
+        setIsInitializing(result.IsInit);
+        // 需要检查初始化状态
+        setIsCheckingStatus(result.IsInit)
+        // 正在更改model
+        setIsChangingModel(result.IsSetModel)
+    }, [t]);
+
+    // 每次进入都要检查
+    useEffect(() => {
+        checkCurrentStatus();
+    }, [checkCurrentStatus]);
+
+    // 切换model
+    const { isChangingModel, modelChangeProgress, setIsChangingModel, setModelChangeProgress } = useModelChange();
+    const [currentModel, setCurrentModel] = useState('');
+    const [modelList, setModelList] = useState<string[]>([]);
+    const [selectedModel, setSelectedModel] = useState<string | null>(null);
+
+    const getCurrentModel = useCallback(async () => {
+        try {
+            const result = await GetCurrentUseModel();
+            if (result.Model) {
+                setCurrentModel(result.Model);
+            } else {
+                console.error('No model returned from GetCurrentUseModel');
+                message.error(t('chatbot.noModelError'));
+            }
+        } catch (error) {
+            console.error('Error getting current model:', error);
+            message.error(t('chatbot.getCurrentModelError'));
+        }
+    }, [t]);
+
+    const getModelList = useCallback(async () => {
+        try {
+            const result = await GetSelectModelList();
+            if (result.Models) {
+                setModelList(result.Models);
+            } else {
+                console.error('No model list returned from GetSelectModelList');
+                message.error(t('chatbot.noModelListError'));
+            }
+        } catch (error) {
+            console.error('Error getting model list:', error);
+            message.error(t('chatbot.getModelListError'));
+        }
+    }, [t]);
+
+    const handleModelChange = useCallback((value: string) => {
+        setIsChangingModel(true);
+        setModelChangeProgress(0);
+        try {
+            SetOllamaModel(value);
+            checkModelChangeProgress();
+        } catch (error) {
+            console.error('Error initiating model change:', error);
+            message.error(t('chatbot.changeModelError'));
+            setIsChangingModel(false);
+            setSelectedModel(null);
+        }
+    }, [t, setIsChangingModel, setModelChangeProgress]);
+
+    const checkModelChangeProgress = useCallback(() => {
+        const checkProgress = async () => {
+            const result = await GetSetOllamaModelProgress();
+            if (result.Exists) {
+                const progressPercentage = Math.min(Math.round((result.Completed / result.Total) * 100), 100);
+                setModelChangeProgress(progressPercentage);
+                if (progressPercentage >= 100) {
+                    setIsChangingModel(false);
+                    getCurrentModel();
+                    setSelectedModel(null);
+                    message.success(t('chatbot.modelChangeSuccess'));
+                    return;
+                }
+                setTimeout(checkProgress, 2000);
+            } else {
+                setIsChangingModel(false);
+                setSelectedModel(null);
+                message.error(t('chatbot.modelChangeNotStarted'));
+            }
+            checkCurrentStatus()
+        };
+        checkProgress();
+    }, [getCurrentModel, t, setIsChangingModel, setModelChangeProgress]);
+
+    useEffect(() => {
+        getCurrentModel();
+        getModelList();
+    }, [getCurrentModel, getModelList]);
 
     const handleSendMessage = useCallback(async () => {
-        if (inputText.trim() === '' || !isInitialized || isChangingModel) return;
+        if (inputText.trim() === '' || isInitializing || isChangingModel) return;
 
         const userMessage: ChatMessage = { role: 'user', content: inputText };
         setMessages(prevMessages => [...prevMessages, userMessage]);
@@ -65,7 +182,7 @@ const Chatbot: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [inputText, isInitialized, isChangingModel, t]);
+    }, [inputText, isChangingModel, t]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -139,7 +256,7 @@ const Chatbot: React.FC = () => {
                 </Panel>
             </Collapse>
             {isCheckingStatus ? (
-                <div>正在检查状态...</div>
+                <div>{t('chatbot.initialize')}...</div>
             ) : (
                 <>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -221,14 +338,14 @@ const Chatbot: React.FC = () => {
                             onChange={(e) => setInputText(e.target.value)}
                             onPressEnter={handleSendMessage}
                             placeholder={t('chatbot.inputPlaceholder')}
-                            disabled={!isInitialized || isLoading || isChangingModel}
+                            disabled={isInitializing || isLoading || isChangingModel}
                         />
                         <Button
                             type="primary"
                             icon={<SendOutlined />}
                             onClick={handleSendMessage}
                             loading={isLoading}
-                            disabled={!isInitialized || isLoading || isChangingModel}
+                            disabled={isInitializing || isLoading || isChangingModel}
                         >
                             {t('chatbot.send')}
                         </Button>
@@ -242,7 +359,7 @@ const Chatbot: React.FC = () => {
                     </Space.Compact>
                     <Modal
                         title={t('chatbot.initModalTitle')}
-                        open={showInitModal}
+                        open={showInitModel}
                         onOk={handleInitialize}
                         onCancel={() => setShowInitModal(false)}
                         okText={t('chatbot.initModalOk')}
