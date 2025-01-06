@@ -49,6 +49,10 @@ func (f *FyChatbot) GetInitOllamaProgress(ctx context.Context) (int64, int64, bo
 	return progressTool.GetProgress(ollamaTool.OllamaInitConTaskKey)
 }
 
+func (f *FyChatbot) InitSetOllamaModelTask(ctx context.Context) error {
+	return ollamaTool.InitSetOllamaModelTask(ctx)
+}
+
 func (f *FyChatbot) SetOllamaModel(ctx context.Context, model string) {
 	go ollamaTool.OllamaContainerSetModel(ctx, model)
 }

@@ -65,3 +65,9 @@ func GetProgress(taskID string) (int64, int64, bool) {
 
 	return completed, total, true
 }
+
+func DeleteTask(taskID string) {
+	progressTracker.mu.Lock()
+	defer progressTracker.mu.Unlock()
+	delete(progressTracker.tasks, taskID)
+}

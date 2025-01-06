@@ -46,6 +46,10 @@ type InitOllamaProgressResult struct {
 	Total     int
 }
 
+type InitSetOllamaModelResult struct {
+	ErrorMsg string
+}
+
 type SetOllamaModelResult struct {
 	ErrorMsg string
 }

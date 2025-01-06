@@ -46,6 +46,10 @@ export function InitOllama() {
   return window['go']['main']['App']['InitOllama']();
 }
 
+export function InitSetOllamaModelTask() {
+  return window['go']['main']['App']['InitSetOllamaModelTask']();
+}
+
 export function SerachNovel(arg1) {
   return window['go']['main']['App']['SerachNovel'](arg1);
 }

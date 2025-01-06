@@ -142,6 +142,15 @@ func (a *App) GetInitOllamaProgress() *model.InitOllamaProgressResult {
 	return res
 }
 
+func (a *App) InitSetOllamaModelTask() *model.InitSetOllamaModelResult {
+	res := &model.InitSetOllamaModelResult{}
+	err := a.chatbot.InitSetOllamaModelTask(a.ctx)
+	if err != nil {
+		res.ErrorMsg = err.Error()
+	}
+	return res
+}
+
 func (a *App) SetOllamaModel(modelName string) *model.SetOllamaModelResult {
 	res := &model.SetOllamaModelResult{}
 	a.chatbot.SetOllamaModel(a.ctx, modelName)

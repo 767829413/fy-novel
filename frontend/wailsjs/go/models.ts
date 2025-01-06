@@ -213,6 +213,18 @@ export namespace model {
 	        this.ErrorMsg = source["ErrorMsg"];
 	    }
 	}
+	export class InitSetOllamaModelResult {
+	    ErrorMsg: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new InitSetOllamaModelResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ErrorMsg = source["ErrorMsg"];
+	    }
+	}
 	export class ProgressResult {
 	    Exists: boolean;
 	    Completed: number;

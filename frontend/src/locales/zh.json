@@ -91,7 +91,7 @@
     "clear": "清空",
     "currentModel": "当前模型",
     "initializationRequired": "需要初始化",
-    "initialize": "初始化",
+    "status": "当前进度",
     "initializationDescription": "使用前需要初始化 Ollama。这可能需要几分钟时间。",
     "checkInitError": "检查 Ollama 状态出错",
     "initError": "初始化 Ollama 时出错",

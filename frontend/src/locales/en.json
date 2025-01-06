@@ -91,7 +91,7 @@
     "clear": "Clear",
     "currentModel": "Current Model",
     "initializationRequired": "Initialization Required",
-    "initialize": "Initialize",
+    "status": "current progress",
     "initializationDescription": "Ollama needs to be initialized before use. This may take a few minutes.",
     "checkInitError": "Error checking Ollama status",
     "initError": "Error initializing Ollama",

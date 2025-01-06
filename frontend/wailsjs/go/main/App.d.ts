@@ -24,6 +24,8 @@ export function HasInitOllama():Promise<model.HasInitOllamaResult>;
 
 export function InitOllama():Promise<model.InitOllamaResult>;
 
+export function InitSetOllamaModelTask():Promise<model.InitSetOllamaModelResult>;
+
 export function SerachNovel(arg1:string):Promise<Array<model.SearchResult>>;
 
 export function SetConfig(arg1:string):Promise<string>;

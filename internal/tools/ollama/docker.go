@@ -120,7 +120,7 @@ func FindOllamaContainer(ctx context.Context) (bool, error) {
 func InitOllamaContainer(ctx context.Context) error {
 	// 首先判断是不是已经在设置模型了
 	completed, total, exists := progressTool.GetProgress(OllamaInitConTaskKey)
-	if !exists || completed == total {
+	if !exists || completed >= total {
 		conf := config.GetConf()
 		progressTool.InitTask(OllamaInitConTaskKey, ollamaInitConTaskAllNum)
 		defer func() {
@@ -243,6 +243,11 @@ func GetOllamaContainerID() (string, bool) {
 	return id, ok && id != ""
 }
 
+func InitSetOllamaModelTask(ctx context.Context) error {
+	progressTool.DeleteTask(OllamaInitConSetModelTaskKey)
+	return nil
+}
+
 func OllamaContainerSetModel(ctx context.Context, modelName string) error {
 	var (
 		containerID string
@@ -325,7 +330,7 @@ func OllamaContainerSetModel(ctx context.Context, modelName string) error {
 		}
 		fmt.Println("设置执行输出", string(output))
 		progressTool.UpdateProgress(OllamaInitConSetModelTaskKey, ollamaInitConSetModelConf)
+		config.SetConf(fmt.Sprintf(`{"chatbot":{"model":"%s"}}`, modelName))
 	}
-	config.SetConf(fmt.Sprintf(`{"chatbot":{"model":"%s"}}`, modelName))
 	return nil
 }
