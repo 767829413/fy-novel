@@ -21,12 +21,13 @@ func NewSearchResultParser(sourceID int) *SearchResultParser {
 	}
 }
 
-func (p *SearchResultParser) Parse(keyword string) ([]*model.SearchResult, error) {
+func (p *SearchResultParser) Parse(keyword string, retry int) ([]*model.SearchResult, error) {
 	search := p.rule.Search
 	isPaging := search.Pagination
 
 	collector := getCollector(
 		p.rule.Search.Cookies,
+		retry,
 	)
 
 	firstPageResults, err := p.getSearchResults(
@@ -34,6 +35,7 @@ func (p *SearchResultParser) Parse(keyword string) ([]*model.SearchResult, error
 		p.rule.Search.URL,
 		utils.BuildMethod(p.rule.Search.Method),
 		keyword,
+		retry,
 	)
 	if err != nil {
 		return nil, err
@@ -62,18 +64,18 @@ func (p *SearchResultParser) Parse(keyword string) ([]*model.SearchResult, error
 
 	for url := range urls {
 		wg.Add(1)
-		go func(url string) {
+		go func(url string, retry int) {
 			defer wg.Done()
 			semaphore <- struct{}{}
 			defer func() { <-semaphore }()
 
-			results, err := p.getSearchResults(nil, url, http.MethodGet, "")
+			results, err := p.getSearchResults(nil, url, http.MethodGet, "", retry)
 			if err != nil {
 				errorChan <- err
 				return
 			}
 			resultChan <- results
-		}(url)
+		}(url, retry)
 	}
 
 	go func() {
@@ -99,10 +101,12 @@ func (p *SearchResultParser) getSearchResults(
 	collector *colly.Collector,
 	url, method string,
 	keyword string,
+	retry int,
 ) ([]*model.SearchResult, error) {
 	if collector == nil {
 		collector = getCollector(
 			p.rule.Search.Cookies,
+			retry,
 		)
 	}
 	var results []*model.SearchResult

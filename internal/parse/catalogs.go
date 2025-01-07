@@ -20,8 +20,8 @@ func NewCatalogsParser(sourceID int) *CatalogsParser {
 	}
 }
 
-func (b *CatalogsParser) Parse(bookUrl string, start, end int) ([]*model.Chapter, error) {
-	collector := getCollector(nil)
+func (b *CatalogsParser) Parse(bookUrl string, start, end, retry int) ([]*model.Chapter, error) {
+	collector := getCollector(nil, retry)
 
 	var chapters = make(map[string]*model.Chapter)
 

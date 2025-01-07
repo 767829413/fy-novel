@@ -40,7 +40,7 @@ func (b *ChapterParser) Parse(
 			var errTemp = "==> Retrying to download failed chapter content: [%s], Attempt: %d/%d, Reason: %s\n"
 			// Prevent duplicate fetching
 			if !downOk {
-				chapter.Content, err = b.crawl(chapter.URL)
+				chapter.Content, err = b.crawl(chapter.URL, attempt)
 				if err != nil {
 					// Attempt retry
 					fmt.Printf(
@@ -76,12 +76,12 @@ func (b *ChapterParser) Parse(
 	return nil
 }
 
-func (b *ChapterParser) crawl(url string) (string, error) {
+func (b *ChapterParser) crawl(url string, retry int) (string, error) {
 	nextUrl := url
 	sb := bytes.NewBufferString("")
 
 	for {
-		collector := getCollector(nil)
+		collector := getCollector(nil, retry)
 		collector.OnHTML(b.rule.Chapter.Content, func(e *colly.HTMLElement) {
 			html, err := e.DOM.Html()
 			if err == nil {

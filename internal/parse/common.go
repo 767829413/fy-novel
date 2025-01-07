@@ -11,13 +11,13 @@ import (
 )
 
 const timeoutMillis = 25000
-const retryMax = 10
+const retryDefault = 3
 
 var urlLock sync.Mutex
 
 var saveErrorUrl = make(map[string]int)
 
-func getCollector(cookies map[string]string) *colly.Collector {
+func getCollector(cookies map[string]string, retry int) *colly.Collector {
 	c := colly.NewCollector(
 		colly.Async(true),
 		// Attach a debugger to the collector
@@ -31,6 +31,10 @@ func getCollector(cookies map[string]string) *colly.Collector {
 		//Delay:      5 * time.Second,
 	})
 
+	if retry == 0 {
+		retry = retryDefault
+	}
+
 	// 设置错误重试
 	c.OnError(func(r *colly.Response, err error) {
 		// 加入一个自动重试机制
@@ -39,13 +43,12 @@ func getCollector(cookies map[string]string) *colly.Collector {
 		if _, ok := saveErrorUrl[link]; !ok {
 			saveErrorUrl[link]++
 			r.Request.Retry()
-		} else if saveErrorUrl[link] < retryMax {
+		} else if saveErrorUrl[link] < retry {
 			saveErrorUrl[link]++
 			r.Request.Retry()
 		} else {
-			fmt.Println(saveErrorUrl[link], link)
+			fmt.Printf("\nRetry %d Request URL: %s, Error: %v", saveErrorUrl[link], link, err)
 		}
-		fmt.Printf("Retry %d Request URL: %s, Error: %v", saveErrorUrl[link], link, err)
 		urlLock.Unlock()
 	})
 

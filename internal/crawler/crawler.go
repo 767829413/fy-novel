@@ -30,7 +30,7 @@ func NewNovelCrawler() Crawler {
 func (nc *novelCrawler) Search(key string) ([]*model.SearchResult, error) {
 	conf := config.GetConf()
 	// Parse
-	res, err := parse.NewSearchResultParser(conf.Base.SourceID).Parse(key)
+	res, err := parse.NewSearchResultParser(conf.Base.SourceID).Parse(key, conf.Retry.MaxAttempts)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (nc *novelCrawler) Search(key string) ([]*model.SearchResult, error) {
 func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.CrawlResult, error) {
 	conf := config.GetConf()
 	// Fetch and parse the novel details page
-	book, err := parse.NewBookParser(conf.Base.SourceID).Parse(res.Url)
+	book, err := parse.NewBookParser(conf.Base.SourceID).Parse(res.Url, conf.Retry.MaxAttempts)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 	}
 	// Get the novel's table of contents
 	catalogsParser := parse.NewCatalogsParser(conf.Base.SourceID)
-	catalogs, err := catalogsParser.Parse(res.Url, start, end)
+	catalogs, err := catalogsParser.Parse(res.Url, start, end, conf.Retry.MaxAttempts)
 	if err != nil {
 		return nil, err
 	}

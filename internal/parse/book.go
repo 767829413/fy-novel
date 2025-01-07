@@ -18,9 +18,9 @@ func NewBookParser(sourceID int) *BookParser {
 	}
 }
 
-func (b *BookParser) Parse(bookUrl string) (*model.Book, error) {
+func (b *BookParser) Parse(bookUrl string, retry int) (*model.Book, error) {
 	book := &model.Book{}
-	collector := getCollector(nil)
+	collector := getCollector(nil, retry)
 	// 抓取书名
 	collector.OnHTML(b.rule.Book.BookName, func(e *colly.HTMLElement) {
 		bookName := e.Attr("content")
