@@ -13,13 +13,13 @@
 
 ## 使用介绍
 
-**有些不支持梯子访问哦！！！**
+![img](./doc/image/zh_1.png)
 
-![img](./doc/image/1.png)
+![img](./doc/image/zh_2.png)
 
-![img](./doc/image/2.png)
+![img](./doc/image/zh_3.png)
 
-![img](./doc/image/3.png)
+![img](./doc/image/zh_4.png)
 
 ## 免责声明
 

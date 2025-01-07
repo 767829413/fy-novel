@@ -14,11 +14,13 @@ As for completed novels, they can also be searched and downloaded. If there are 
 
 ## Usage Guide
 
-**Please note that some sources may not support proxy access!**
+![img](./image/en_1.png)
 
-![img](./image/1.png)
+![img](./image/en_2.png)
 
-![img](./image/2.png)
+![img](./image/en_3.png)
+
+![img](./image/en_4.png)
 
 ## Disclaimer
 
