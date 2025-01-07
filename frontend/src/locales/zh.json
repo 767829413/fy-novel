@@ -64,6 +64,7 @@
     "columnLatestChapter": "最新章节",
     "columnLatestUpdate": "最近更新",
     "columnAction": "操作",
+    "downloading": "正在下载...",
     "startDownload": "开始下载 '{{bookName}}'",
     "downloadComplete": "'{{bookName}}' 下载完成！输出路径：{{outputPath}} 耗时：{{takeTime}} 秒",
     "downloadFailure": "下载 '{{bookName}}' 失败，请稍后重试",

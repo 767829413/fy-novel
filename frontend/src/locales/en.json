@@ -64,6 +64,7 @@
     "columnLatestChapter": "Latest Chapter",
     "columnLatestUpdate": "Latest Update",
     "columnAction": "Action",
+    "downloading": "Downloading...",
     "startDownload": "Start downloading '{{bookName}}'",
     "downloadComplete": "'{{bookName}}' download complete! Output path: {{outputPath}} Time taken: {{takeTime}} seconds",
     "downloadFailure": "Failed to download '{{bookName}}', please try again later",

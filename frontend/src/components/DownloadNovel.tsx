@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Table, Space, Input, Button, message, Progress } from 'antd';
+import { Table, Space, Input, Button, message, Progress, Modal } from 'antd';
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import type { TableProps } from 'antd';
 import { SerachNovel, DownLoadNovel, GetDownloadProgress } from "../../wailsjs/go/main/App.js"
 import { model } from "../../wailsjs/go/models";
 import { useDownload } from '../context/DownloadContext';
+
 
 const { Search } = Input;
 
@@ -19,6 +20,7 @@ const DownloadNovel: React.FC = () => {
     const progressIntervalRef = useRef<number | null>(null);
     const { isDownloading, setIsDownloading } = useDownload();
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const pageSize = 10;
 
     useEffect(() => {
@@ -69,6 +71,7 @@ const DownloadNovel: React.FC = () => {
         setIsDownloading(true);
         setDownloadProgress(0);
         setIsMerging(false);
+        setIsModalVisible(true);
         message.info(t('downloadNovel.startDownload', { bookName: record.bookName }));
 
         progressIntervalRef.current = window.setInterval(async () => {
@@ -116,6 +119,7 @@ const DownloadNovel: React.FC = () => {
                 setIsDownloading(false);
                 setDownloadProgress(0);
                 setIsMerging(false);
+                setIsModalVisible(false);
             });
     };
 
@@ -184,18 +188,26 @@ const DownloadNovel: React.FC = () => {
             </Space>
             <br />
             <br />
-            {isDownloading && (
-                <Progress
-                    percent={downloadProgress}
-                    status="active"
-                    format={(percent: number = 0) => {
-                        if (isMerging) {
-                            return t('downloadNovel.merging');
-                        }
-                        return `${percent}%`;
-                    }}
-                />
-            )}
+            <Modal
+                title={t('downloadNovel.downloading')}
+                open={isModalVisible}
+                closable={false}
+                footer={null}
+                maskClosable={false}
+            >
+                {isDownloading && (
+                    <Progress
+                        percent={downloadProgress}
+                        status="active"
+                        format={(percent: number = 0) => {
+                            if (isMerging) {
+                                return t('downloadNovel.merging');
+                            }
+                            return `${percent}%`;
+                        }}
+                    />
+                )}
+            </Modal>
             <Table<model.SearchResult>
                 columns={columns}
                 dataSource={searchResults}

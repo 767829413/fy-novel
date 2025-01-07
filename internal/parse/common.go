@@ -2,6 +2,7 @@ package parse
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/gocolly/colly/v2"
@@ -9,7 +10,12 @@ import (
 	"github.com/gocolly/colly/v2/extensions"
 )
 
-const timeoutMillis = 15000
+const timeoutMillis = 25000
+const retryMax = 10
+
+var urlLock sync.Mutex
+
+var saveErrorUrl = make(map[string]int)
 
 func getCollector(cookies map[string]string) *colly.Collector {
 	c := colly.NewCollector(
@@ -19,16 +25,28 @@ func getCollector(cookies map[string]string) *colly.Collector {
 	)
 	extensions.RandomUserAgent(c)
 	c.SetRequestTimeout(timeoutMillis * time.Millisecond)
-
 	c.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 1,
 		//Delay:      5 * time.Second,
 	})
 
-	// 設定錯誤回呼函式
+	// 设置错误重试
 	c.OnError(func(r *colly.Response, err error) {
-		fmt.Printf("/nError: %s: Request URL: %s/n", err, r.Request.URL)
+		// 加入一个自动重试机制
+		link := r.Request.URL.String()
+		urlLock.Lock()
+		if _, ok := saveErrorUrl[link]; !ok {
+			saveErrorUrl[link]++
+			r.Request.Retry()
+		} else if saveErrorUrl[link] < retryMax {
+			saveErrorUrl[link]++
+			r.Request.Retry()
+		} else {
+			fmt.Println(saveErrorUrl[link], link)
+		}
+		fmt.Printf("Retry %d Request URL: %s, Error: %v", saveErrorUrl[link], link, err)
+		urlLock.Unlock()
 	})
 
 	// Set cookies
