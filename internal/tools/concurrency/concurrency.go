@@ -12,7 +12,7 @@ const (
 var once sync.Once
 var defaultConcurrency int
 
-func GetConcurrencyNum(target int) int {
+func GetConcurrencyNum(target, sourceID int) int {
 	once.Do(func() {
 		defaultConcurrency = runtime.NumCPU()
 	})
@@ -21,6 +21,10 @@ func GetConcurrencyNum(target int) int {
 	}
 	if target >= maxThreads {
 		target = maxThreads
+	}
+	// 书源3有防爬机制，不能并发太高
+	if sourceID == 3 {
+		return 1
 	}
 	return target
 }

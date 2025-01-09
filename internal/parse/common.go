@@ -11,7 +11,8 @@ import (
 )
 
 const timeoutMillis = 25000
-const retryDefault = 3
+const retryDefault = 10
+const sleepSecond = 1 * time.Second
 
 var urlLock sync.Mutex
 
@@ -44,6 +45,7 @@ func getCollector(cookies map[string]string, retry int) *colly.Collector {
 			saveErrorUrl[link]++
 			r.Request.Retry()
 		} else if saveErrorUrl[link] < retry {
+			time.Sleep(sleepSecond * time.Duration(retry))
 			saveErrorUrl[link]++
 			r.Request.Retry()
 		} else {

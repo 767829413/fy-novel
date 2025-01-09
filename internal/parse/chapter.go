@@ -33,6 +33,9 @@ func (b *ChapterParser) Parse(
 	downOk := false
 	attemptStart := 1
 	attempt := conf.Retry.MaxAttempts
+	if conf.Base.SourceID == 3 {
+		attempt = 0
+	}
 	// Fetch content
 	utils.SpinWaitMaxRetryAttempts(
 		func() bool {

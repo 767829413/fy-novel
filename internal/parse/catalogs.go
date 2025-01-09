@@ -1,11 +1,13 @@
 package parse
 
 import (
+	"fmt"
 	"sort"
 
 	"fy-novel/internal/model"
 	"fy-novel/internal/source"
 	"fy-novel/pkg/utils"
+
 	"github.com/gocolly/colly/v2"
 	// "github.com/gocolly/colly/v2/debug"
 )
@@ -25,7 +27,12 @@ func (b *CatalogsParser) Parse(bookUrl string, start, end, retry int) ([]*model.
 
 	var chapters = make(map[string]*model.Chapter)
 
-	collector.OnHTML(b.rule.Book.Catalog, func(e *colly.HTMLElement) {
+	if len(b.rule.Catalog.URL) > 0 {
+		id := utils.GetGroup1(b.rule.Book.URL, bookUrl)
+		bookUrl = fmt.Sprintf(b.rule.Catalog.URL, id)
+	}
+
+	collector.OnHTML(b.rule.Catalog.Result, func(e *colly.HTMLElement) {
 		chapter := &model.Chapter{
 			Title: e.Text,
 			URL:   utils.NormalizeURL(e.Attr("href"), b.rule.URL),

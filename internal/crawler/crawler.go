@@ -67,7 +67,7 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 	// Parse and download content
 	// Limit concurrent processing
 	var wg sync.WaitGroup
-	threads := concurrencyTool.GetConcurrencyNum(conf.Crawl.Threads)
+	threads := concurrencyTool.GetConcurrencyNum(conf.Crawl.Threads, conf.Base.SourceID)
 	semaphore := make(chan struct{}, threads)
 	var nowCatalogsCount = int32(0)
 	// Total completed tasks = number of chapters fetched + 1 (merging task)

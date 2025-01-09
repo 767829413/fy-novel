@@ -10,6 +10,7 @@ type Rule struct {
 	Search  search  `json:"search"`
 	Book    book    `json:"book"`
 	Chapter chapter `json:"chapter"`
+	Catalog catalog `json:"catalog"`
 }
 
 // Search represents the search rules
@@ -39,8 +40,15 @@ type book struct {
 	LatestChapter string `json:"latestChapter"`
 	LatestUpdate  string `json:"latestUpdate"`
 	IsEnd         string `json:"isEnd"`
-	Catalog       string `json:"catalog"`
 	CatalogOffset int    `json:"catalogOffset"`
+}
+
+type catalog struct {
+	URL        string `json:"url"`
+	Result     string `json:"result"`
+	Pagination bool   `json:"pagination"`
+	NextPage   string `json:"nextPage"`
+	Offset     int    `json:"offset"`
 }
 
 // Chapter represents the chapter rules

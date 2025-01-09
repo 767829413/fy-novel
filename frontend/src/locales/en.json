@@ -37,7 +37,8 @@
     "chatbotSettings": "Chatbot Settings",
     "chatbotSupportInfo": "Note: The current configuration only supports Ollama, switching models may result in a download of the",
     "model": "model",
-    "modelTooltip": "Ollama supports a list of models available on https://ollama.com/library"
+    "modelTooltip": "Ollama supports a list of models available on https://ollama.com/library",
+    "slowSource": "There is a limitation on the current source of books, the download will be very slow"
   },
   "checkUpdate": {
     "title": "Check Update",

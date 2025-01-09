@@ -28,9 +28,11 @@
     "coverUrl": "#fmimg > img",
     "latestChapter": "",
     "latestUpdate": "",
-    "isEnd": "",
-    "catalog": "#list > dl > dd > a",
-    "catalogOffset": 12
+    "isEnd": ""
+  },
+  "catalog": {
+    "result": "#list > dl > dd > a",
+    "offset": 12
   },
   "chapter": {
     "url": "http://www.mcmssc.la/%s/%s.html",

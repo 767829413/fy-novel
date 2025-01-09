@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"os"
+	"regexp"
 	"time"
 	"unicode"
 )
@@ -132,4 +133,42 @@ func StringToUniqueHash(s string) uint64 {
 	h := fnv.New64a()
 	h.Write([]byte(s))
 	return h.Sum64()
+}
+
+// GetGroup0 获得匹配的字符串，获得正则中分组0的内容
+//
+// regex: 匹配的正则
+// content: 被匹配的内容
+// 返回值: 匹配后得到的字符串，未匹配返回空字符串
+func GetGroup0(regex string, content string) string {
+	return Get(regex, content, 0)
+}
+
+// GetGroup1 获得匹配的字符串，获得正则中分组1的内容
+//
+// regex: 匹配的正则
+// content: 被匹配的内容
+// 返回值: 匹配后得到的字符串，未匹配返回空字符串
+func GetGroup1(regex string, content string) string {
+	return Get(regex, content, 1)
+}
+
+// Get 获得匹配的字符串
+//
+// regex: 匹配的正则
+// content: 被匹配的内容
+// groupIndex: 匹配正则的分组序号
+// 返回值: 匹配后得到的字符串，未匹配返回空字符串
+func Get(regex string, content string, groupIndex int) string {
+	re, err := regexp.Compile(regex)
+	if err != nil {
+		return ""
+	}
+
+	matches := re.FindStringSubmatch(content)
+	if len(matches) > groupIndex {
+		return matches[groupIndex]
+	}
+
+	return ""
 }

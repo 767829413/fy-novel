@@ -23,7 +23,7 @@
     "crawlSettings": "爬取设置",
     "retrySettings": "重试设置",
     "enableBookSource": "启用书源",
-    "bookSourceTooltip": "只能选一个, 当前可选值：1、2、3，建议使用默认书源 3",
+    "bookSourceTooltip": "只能选一个, 当前可选值：1、2、3，建议不使用书源 3，有限速和防爬",
     "downloadPath": "下载路径",
     "downloadPathTooltip": "绝对相对均可 (Windows 路径分隔符不要用 \\ , 用 / 或 \\)",
     "fileExtension": "文件扩展名",
@@ -37,7 +37,8 @@
     "chatbotSettings": "聊天机器人设置",
     "chatbotSupportInfo": "注意：当前配置仅支持 Ollama，切换模型可能会导致下载",
     "model": "模型",
-    "modelTooltip": "Ollama 支持 https://ollama.com/library 上可用的模型列表"
+    "modelTooltip": "Ollama 支持 https://ollama.com/library 上可用的模型列表",
+    "slowSource": "当前书源有限制，下载会很慢"
   },
   "checkUpdate": {
     "title": "检查更新",
