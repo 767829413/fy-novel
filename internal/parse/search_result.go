@@ -30,6 +30,14 @@ func (p *SearchResultParser) Parse(keyword string, retry int) ([]*model.SearchRe
 		retry,
 	)
 
+	urls := make(map[string]struct{})
+
+	collector.OnHTML(p.rule.Search.NextPage, func(e *colly.HTMLElement) {
+		href := e.Attr("href")
+		url := utils.NormalizeURL(href, p.rule.URL)
+		urls[url] = struct{}{}
+	})
+
 	firstPageResults, err := p.getSearchResults(
 		collector,
 		p.rule.Search.URL,
@@ -48,14 +56,6 @@ func (p *SearchResultParser) Parse(keyword string, retry int) ([]*model.SearchRe
 	if !isPaging {
 		return firstPageResults, nil
 	}
-
-	urls := make(map[string]struct{})
-
-	collector.OnHTML(p.rule.Search.NextPage, func(e *colly.HTMLElement) {
-		href := e.Attr("href")
-		url := utils.NormalizeURL(href, p.rule.URL)
-		urls[url] = struct{}{}
-	})
 
 	var wg sync.WaitGroup
 	resultChan := make(chan []*model.SearchResult, len(urls))
