@@ -18,7 +18,11 @@ var urlLock sync.Mutex
 
 var saveErrorUrl = make(map[string]int)
 
-func getCollector(cookies map[string]string, retry int) *colly.Collector {
+func getCollector(
+	cookies map[string]string,
+	retry int,
+	randomDelay time.Duration,
+) *colly.Collector {
 	c := colly.NewCollector(
 		colly.Async(true),
 		// Attach a debugger to the collector
@@ -26,11 +30,15 @@ func getCollector(cookies map[string]string, retry int) *colly.Collector {
 	)
 	extensions.RandomUserAgent(c)
 	c.SetRequestTimeout(timeoutMillis * time.Millisecond)
-	c.Limit(&colly.LimitRule{
+	limitRule := &colly.LimitRule{
 		DomainGlob:  "*",
 		Parallelism: 1,
-		//Delay:      5 * time.Second,
-	})
+		// RandomDelay: 600 * time.Millisecond,
+	}
+	if randomDelay != 0 {
+		limitRule.RandomDelay = randomDelay
+	}
+	c.Limit(limitRule)
 
 	if retry == 0 {
 		retry = retryDefault
@@ -41,11 +49,11 @@ func getCollector(cookies map[string]string, retry int) *colly.Collector {
 		// 加入一个自动重试机制
 		link := r.Request.URL.String()
 		urlLock.Lock()
+		time.Sleep(sleepSecond * time.Duration(retry))
 		if _, ok := saveErrorUrl[link]; !ok {
 			saveErrorUrl[link]++
 			r.Request.Retry()
-		} else if saveErrorUrl[link] < retry {
-			time.Sleep(sleepSecond * time.Duration(retry))
+		} else if saveErrorUrl[link] <= retry {
 			saveErrorUrl[link]++
 			r.Request.Retry()
 		} else {

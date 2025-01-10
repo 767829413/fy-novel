@@ -15,11 +15,13 @@ import (
 
 type ChapterParser struct {
 	rule model.Rule
+	conf config.Info
 }
 
-func NewChapterParser(sourceID int) *ChapterParser {
+func NewChapterParser(conf config.Info) *ChapterParser {
 	return &ChapterParser{
-		rule: source.GetRuleBySourceID(sourceID),
+		rule: source.GetRuleBySourceID(conf.Base.SourceID),
+		conf: conf,
 	}
 }
 
@@ -29,62 +31,25 @@ func (b *ChapterParser) Parse(
 	book *model.Book,
 	bookDir string,
 ) (err error) {
-	conf := config.GetConf()
-	downOk := false
-	attemptStart := 1
-	attempt := conf.Retry.MaxAttempts
-	if conf.Base.SourceID == 3 {
-		attempt = 0
+	// Prevent duplicate fetching
+	chapter.Content, err = b.crawl(chapter.URL)
+	if err != nil {
+		// Attempt retry
+		return err
 	}
-	// Fetch content
-	utils.SpinWaitMaxRetryAttempts(
-		func() bool {
-			var err error
-			var errTemp = "==> Retrying to download failed chapter content: [%s], Attempt: %d/%d, Reason: %s\n"
-			// Prevent duplicate fetching
-			if !downOk {
-				chapter.Content, err = b.crawl(chapter.URL, attempt)
-				if err != nil {
-					// Attempt retry
-					fmt.Printf(
-						errTemp,
-						chapter.Title,
-						attemptStart,
-						attempt,
-						err.Error(),
-					)
-					attemptStart++
-					return false
-				} else {
-					downOk = true
-				}
-			}
-			err = chapterTool.ConvertChapter(chapter, conf.Base.Extname, b.rule)
-			if err != nil {
-				// Attempt retry
-				fmt.Printf(
-					errTemp,
-					chapter.Title,
-					attemptStart,
-					attempt,
-					err.Error(),
-				)
-				attemptStart++
-				return false
-			}
-			return true
-		},
-		attempt,
-	)
+	err = chapterTool.ConvertChapter(chapter, b.conf.Base.Extname, b.rule)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func (b *ChapterParser) crawl(url string, retry int) (string, error) {
+func (b *ChapterParser) crawl(url string) (string, error) {
 	nextUrl := url
 	sb := bytes.NewBufferString("")
 
 	for {
-		collector := getCollector(nil, retry)
+		collector := getCollector(nil, b.conf.Retry.MaxAttempts, b.conf.GetRandomDelay())
 		collector.OnHTML(b.rule.Chapter.Content, func(e *colly.HTMLElement) {
 			html, err := e.DOM.Html()
 			if err == nil {

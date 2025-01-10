@@ -6,7 +6,6 @@ import (
 	"fy-novel/internal/model"
 	"fy-novel/internal/parse"
 	chapterTool "fy-novel/internal/tools/chapter"
-	concurrencyTool "fy-novel/internal/tools/concurrency"
 	mergeTool "fy-novel/internal/tools/merge"
 	progressTool "fy-novel/internal/tools/progress"
 	"os"
@@ -21,16 +20,19 @@ type Crawler interface {
 	Crawl(res *model.SearchResult, start, end int) (*model.CrawlResult, error)
 }
 
-type novelCrawler struct{}
+type novelCrawler struct {
+	conf config.Info
+}
 
-func NewNovelCrawler() Crawler {
-	return &novelCrawler{}
+func NewNovelCrawler(conf config.Info) Crawler {
+	return &novelCrawler{
+		conf: conf,
+	}
 }
 
 func (nc *novelCrawler) Search(key string) ([]*model.SearchResult, error) {
-	conf := config.GetConf()
 	// Parse
-	res, err := parse.NewSearchResultParser(conf.Base.SourceID).Parse(key, conf.Retry.MaxAttempts)
+	res, err := parse.NewSearchResultParser(nc.conf).Parse(key)
 	if err != nil {
 		return nil, err
 	}
@@ -38,24 +40,23 @@ func (nc *novelCrawler) Search(key string) ([]*model.SearchResult, error) {
 }
 
 func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.CrawlResult, error) {
-	conf := config.GetConf()
 	// Fetch and parse the novel details page
-	book, err := parse.NewBookParser(conf.Base.SourceID).Parse(res.Url, conf.Retry.MaxAttempts)
+	book, err := parse.NewBookParser(nc.conf).Parse(res.Url)
 	if err != nil {
 		return nil, err
 	}
 
 	// Format the directory name as "BookName (Author)"
 	bookDir := fmt.Sprintf("%s (%s)", book.BookName, book.Author)
-	dirPath := filepath.Join(conf.Base.DownloadPath, bookDir)
+	dirPath := filepath.Join(nc.conf.Base.DownloadPath, bookDir)
 	// Create the directory
 	err = os.MkdirAll(dirPath, os.ModePerm)
 	if err != nil {
 		return nil, err
 	}
 	// Get the novel's table of contents
-	catalogsParser := parse.NewCatalogsParser(conf.Base.SourceID)
-	catalogs, err := catalogsParser.Parse(res.Url, start, end, conf.Retry.MaxAttempts)
+	catalogsParser := parse.NewCatalogsParser(nc.conf)
+	catalogs, err := catalogsParser.Parse(res.Url, start, end)
 	if err != nil {
 		return nil, err
 	}
@@ -67,9 +68,8 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 	// Parse and download content
 	// Limit concurrent processing
 	var wg sync.WaitGroup
-	threads := concurrencyTool.GetConcurrencyNum(conf.Crawl.Threads, conf.Base.SourceID)
-	semaphore := make(chan struct{}, threads)
-	var nowCatalogsCount = int32(0)
+	semaphore := make(chan struct{}, nc.conf.GetConcurrencyNum())
+	var nowCatalogsCount = int64(0)
 	// Total completed tasks = number of chapters fetched + 1 (merging task)
 	progressTool.InitTask(res.Url, int64(len(catalogs)+1))
 	for _, chapter := range catalogs {
@@ -78,13 +78,17 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 			defer wg.Done()
 			semaphore <- struct{}{}
 			defer func() { <-semaphore }()
-			// Download logic
-			parse.NewChapterParser(conf.Base.SourceID).Parse(chapter, res, book, bookDir)
-			chapterTool.CreateFileForChapter(chapter, bookDir)
 			defer func() {
-				atomic.AddInt32(&nowCatalogsCount, 1)
-				progressTool.UpdateProgress(res.Url, int64(nowCatalogsCount))
+				atomic.AddInt64(&nowCatalogsCount, 1)
+				progressTool.UpdateProgress(res.Url, nowCatalogsCount)
 			}()
+			// Download logic
+			err := parse.NewChapterParser(nc.conf).Parse(chapter, res, book, bookDir)
+			if err != nil {
+				fmt.Printf("parse.NewChapterParser(conf.Base.SourceID).Parse error: %v", err)
+				return
+			}
+			chapterTool.CreateFileForChapter(chapter, bookDir)
 		}(
 			chapter,
 			bookDir,
@@ -99,7 +103,7 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 	}
 	// Task completed
 	defer func() {
-		atomic.AddInt32(&nowCatalogsCount, 1)
+		atomic.AddInt64(&nowCatalogsCount, 1)
 		progressTool.UpdateProgress(res.Url, int64(nowCatalogsCount))
 	}()
 

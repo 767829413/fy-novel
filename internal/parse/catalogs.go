@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 
+	"fy-novel/internal/config"
 	"fy-novel/internal/model"
 	"fy-novel/internal/source"
 	"fy-novel/pkg/utils"
@@ -14,16 +15,18 @@ import (
 
 type CatalogsParser struct {
 	rule model.Rule
+	conf config.Info
 }
 
-func NewCatalogsParser(sourceID int) *CatalogsParser {
+func NewCatalogsParser(conf config.Info) *CatalogsParser {
 	return &CatalogsParser{
-		rule: source.GetRuleBySourceID(sourceID),
+		rule: source.GetRuleBySourceID(conf.Base.SourceID),
+		conf: conf,
 	}
 }
 
-func (b *CatalogsParser) Parse(bookUrl string, start, end, retry int) ([]*model.Chapter, error) {
-	collector := getCollector(nil, retry)
+func (b *CatalogsParser) Parse(bookUrl string, start, end int) ([]*model.Chapter, error) {
+	collector := getCollector(nil, b.conf.Retry.MaxAttempts, b.conf.GetRandomDelay())
 
 	var chapters = make(map[string]*model.Chapter)
 

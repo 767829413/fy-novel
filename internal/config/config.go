@@ -4,10 +4,12 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	concurrencyTool "fy-novel/internal/tools/concurrency"
 	"os"
 	"path/filepath"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -61,6 +63,22 @@ func (i Info) ToJSON() (string, error) {
 		return "", err
 	}
 	return string(jsonBytes), nil
+}
+
+func (i Info) GetRandomDelay() time.Duration {
+
+	if isSlowSource(i.Base.SourceID) {
+		return 2 * time.Second
+	}
+	return 250 * time.Millisecond
+}
+
+func (i Info) GetConcurrencyNum() int {
+	threads := concurrencyTool.GetConcurrencyNumBySourceID(i.Crawl.Threads)
+	if isSlowSource(i.Base.SourceID) {
+		return 1
+	}
+	return threads
 }
 
 // LoadConfig reads configuration from file or environment variables.
@@ -186,4 +204,12 @@ func SetConf(conf string) error {
 	}
 
 	return nil
+}
+
+func isSlowSource(sourceId int) bool {
+	var slowSourceMap = map[int]bool{
+		// Slow source IDs
+		3: true,
+	}
+	return slowSourceMap[sourceId]
 }

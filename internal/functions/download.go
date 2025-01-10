@@ -3,8 +3,10 @@ package functions
 import (
 	"math"
 
+	"fy-novel/internal/config"
 	"fy-novel/internal/crawler"
 	"fy-novel/internal/model"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,7 +16,8 @@ type Downloader struct {
 }
 
 func NewDownload(l *logrus.Logger) *Downloader {
-	return &Downloader{log: l, crawler: crawler.NewNovelCrawler()}
+	conf := config.GetConf()
+	return &Downloader{log: l, crawler: crawler.NewNovelCrawler(conf)}
 }
 
 func (d *Downloader) Serach(name string) ([]*model.SearchResult, error) {

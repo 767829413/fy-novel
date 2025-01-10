@@ -1,26 +1,30 @@
 package parse
 
 import (
+	"fy-novel/internal/config"
 	"fy-novel/internal/model"
 	"fy-novel/internal/source"
 	"fy-novel/pkg/utils"
+
 	"github.com/gocolly/colly/v2"
 	// "github.com/gocolly/colly/v2/debug"
 )
 
 type BookParser struct {
 	rule model.Rule
+	conf config.Info
 }
 
-func NewBookParser(sourceID int) *BookParser {
+func NewBookParser(conf config.Info) *BookParser {
 	return &BookParser{
-		rule: source.GetRuleBySourceID(sourceID),
+		rule: source.GetRuleBySourceID(conf.Base.SourceID),
+		conf: conf,
 	}
 }
 
-func (b *BookParser) Parse(bookUrl string, retry int) (*model.Book, error) {
+func (b *BookParser) Parse(bookUrl string) (*model.Book, error) {
 	book := &model.Book{}
-	collector := getCollector(nil, retry)
+	collector := getCollector(nil, b.conf.Retry.MaxAttempts, b.conf.GetRandomDelay())
 	// 抓取书名
 	collector.OnHTML(b.rule.Book.BookName, func(e *colly.HTMLElement) {
 		bookName := e.Attr("content")

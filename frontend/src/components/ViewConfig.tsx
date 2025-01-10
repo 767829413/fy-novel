@@ -64,6 +64,15 @@ const ViewConfig: React.FC = () => {
         '32': '32'
     };
 
+    const formItemLayout = {
+        labelCol: { span: 8 },
+        wrapperCol: { span: 16 },
+    };
+
+    const formItemStyle = {
+        marginLeft: '-10px',  // 你可以根据需要调整这个值
+    };
+
     const tabItems = [
         {
             key: '1',
@@ -80,17 +89,24 @@ const ViewConfig: React.FC = () => {
                                 </Tooltip>
                             </span>
                         }
-                        style={{ width: '30%' }}
+                        style={formItemStyle}
                     >
                         <Select
                             options={[
                                 { value: 1, label: '1' },
                                 { value: 2, label: '2' },
-                                { value: 3, label: '3', tooltip: t('viewConfig.slowSource') },
+                                { value: 3, label: '3', slowSource: t('viewConfig.slowSource') },
                             ]}
-                            style={{ width: '100%' }}
+                            optionRender={(option) => (
+                                <Tooltip title={option.data.slowSource} placement="right">
+                                    <div style={{ padding: '4px 8px' }}>
+                                        {option.label}
+                                    </div>
+                                </Tooltip>
+                            )}
                         />
                     </Form.Item>
+
                     <Form.Item
                         name={["base", "download-path"]}
                         label={
@@ -101,9 +117,11 @@ const ViewConfig: React.FC = () => {
                                 </Tooltip>
                             </span>
                         }
+                        style={formItemStyle}
                     >
                         <Input />
                     </Form.Item>
+
                     <Form.Item
                         name={["base", "extname"]}
                         label={
@@ -114,14 +132,13 @@ const ViewConfig: React.FC = () => {
                                 </Tooltip>
                             </span>
                         }
-                        style={{ width: '30%' }}
+                        style={formItemStyle}
                     >
                         <Select
                             options={[
                                 { value: "txt", label: "txt" },
                                 { value: "epub", label: "epub" }
                             ]}
-                            style={{ width: '100%' }}
                         />
                     </Form.Item>
                     <Form.Item
@@ -134,7 +151,7 @@ const ViewConfig: React.FC = () => {
                                 </Tooltip>
                             </span>
                         }
-                        style={{ width: '30%' }}
+                        style={formItemStyle}
                     >
                         <Select
                             options={['panic', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'].map(level => ({
@@ -161,6 +178,7 @@ const ViewConfig: React.FC = () => {
                             </Tooltip>
                         </span>
                     }
+                    style={formItemStyle}
                 >
                     <Slider
                         marks={threadMarks}
@@ -186,6 +204,7 @@ const ViewConfig: React.FC = () => {
                             </Tooltip>
                         </span>
                     }
+                    style={formItemStyle}
                 >
                     <InputNumber min={0} />
                 </Form.Item>
@@ -214,7 +233,7 @@ const ViewConfig: React.FC = () => {
             {config && config.Config && (
                 <Form
                     form={form}
-                    layout="vertical"
+                    {...formItemLayout}
                     onFinish={onFinish}
                     initialValues={config.Config}
                     style={{ maxWidth: '500px' }}

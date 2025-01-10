@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"sync"
 
+	"fy-novel/internal/config"
 	"fy-novel/internal/model"
 	"fy-novel/internal/source"
 	"fy-novel/pkg/utils"
@@ -13,21 +14,24 @@ import (
 
 type SearchResultParser struct {
 	rule model.Rule
+	conf config.Info
 }
 
-func NewSearchResultParser(sourceID int) *SearchResultParser {
+func NewSearchResultParser(conf config.Info) *SearchResultParser {
 	return &SearchResultParser{
-		rule: source.GetRuleBySourceID(sourceID),
+		rule: source.GetRuleBySourceID(conf.Base.SourceID),
+		conf: conf,
 	}
 }
 
-func (p *SearchResultParser) Parse(keyword string, retry int) ([]*model.SearchResult, error) {
+func (p *SearchResultParser) Parse(keyword string) ([]*model.SearchResult, error) {
 	search := p.rule.Search
 	isPaging := search.Pagination
 
 	collector := getCollector(
 		p.rule.Search.Cookies,
-		retry,
+		p.conf.Retry.MaxAttempts,
+		p.conf.GetRandomDelay(),
 	)
 
 	urls := make(map[string]struct{})
@@ -43,7 +47,6 @@ func (p *SearchResultParser) Parse(keyword string, retry int) ([]*model.SearchRe
 		p.rule.Search.URL,
 		utils.BuildMethod(p.rule.Search.Method),
 		keyword,
-		retry,
 	)
 	if err != nil {
 		return nil, err
@@ -60,22 +63,25 @@ func (p *SearchResultParser) Parse(keyword string, retry int) ([]*model.SearchRe
 	var wg sync.WaitGroup
 	resultChan := make(chan []*model.SearchResult, len(urls))
 	errorChan := make(chan error, len(urls))
-	semaphore := make(chan struct{}, 20) // Limit concurrency to 20
+	semaphore := make(
+		chan struct{},
+		p.conf.GetConcurrencyNum(),
+	) // Limit concurrency to 20
 
 	for url := range urls {
 		wg.Add(1)
-		go func(url string, retry int) {
+		go func(url string) {
 			defer wg.Done()
 			semaphore <- struct{}{}
 			defer func() { <-semaphore }()
 
-			results, err := p.getSearchResults(nil, url, http.MethodGet, "", retry)
+			results, err := p.getSearchResults(nil, url, http.MethodGet, "")
 			if err != nil {
 				errorChan <- err
 				return
 			}
 			resultChan <- results
-		}(url, retry)
+		}(url)
 	}
 
 	go func() {
@@ -101,12 +107,12 @@ func (p *SearchResultParser) getSearchResults(
 	collector *colly.Collector,
 	url, method string,
 	keyword string,
-	retry int,
 ) ([]*model.SearchResult, error) {
 	if collector == nil {
 		collector = getCollector(
 			p.rule.Search.Cookies,
-			retry,
+			p.conf.Retry.MaxAttempts,
+			p.conf.GetRandomDelay(),
 		)
 	}
 	var results []*model.SearchResult
