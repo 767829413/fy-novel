@@ -21,6 +21,8 @@
 
 ![img](./doc/image/zh_4.png)
 
+![deep_seek2.png](https://s2.loli.net/2025/02/07/Pqf4g7KBVUbvkeC.jpg)
+
 ## 免责声明
 
 此程序乃作者研习Go语言之练习项目，倘使用中有何问题，皆与作者无关！！！

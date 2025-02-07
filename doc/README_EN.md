@@ -22,6 +22,8 @@ As for completed novels, they can also be searched and downloaded. If there are 
 
 ![img](./image/en_4.png)
 
+![deep_seek.png](https://s2.loli.net/2025/02/07/D2LbHcGWAlBXpxM.jpg)
+
 ## Disclaimer
 
 This program is a practice project for the author to learn the Go language. The author is not responsible for any issues that may arise from its use!!!
