@@ -5,7 +5,7 @@ import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Collapse, Input, Button, Typography, Space, message, Modal, Progress, Select, Tag, Tabs } from 'antd';
+import { Card, Alert, Collapse, Input, Button, Typography, Space, message, Modal, Progress, Select, Tag, Tabs } from 'antd';
 import { SendOutlined, UserOutlined, RobotOutlined, DeleteOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { StartChatbot, DeepSeekChat } from '../../wailsjs/go/main/App';
 import { useOllama } from '../hooks/useOllama';
@@ -91,8 +91,10 @@ const Chatbot: React.FC = () => {
     }, [isChangingModel, checkModelChangeProgress]);
 
     useEffect(() => {
-        getCurrentModel();
-        getModelList();
+        if (activeTab === 'ollama') {
+            getCurrentModel();
+            getModelList();
+        }
     }, [getCurrentModel, getModelList]);
 
     const handleSendMessage = useCallback(async () => {
@@ -151,10 +153,19 @@ const Chatbot: React.FC = () => {
         setMessages([]);
     }, []);
 
+    const handleTabChange = (activeKey: string) => {
+        setActiveTab(activeKey);
+        if (activeKey === 'ollama') {
+            checkCurrentStatus();
+            getCurrentModel();
+            getModelList();
+        }
+    };
+
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-            <Tabs activeKey={activeTab} onChange={setActiveTab}>
+            <Tabs activeKey={activeTab} onChange={handleTabChange}>
                 <TabPane tab="DeepSeek" key="deepseek">
                     <div style={{ marginBottom: '20px' }}>
                         <Input.Password
@@ -193,7 +204,25 @@ const Chatbot: React.FC = () => {
                                 backgroundColor: '#e6f7ff'
                             }}
                         >
-                            {/* Ollama 先决条件内容 */}
+                            {/* Ollama 先决条件内容 */
+                                <div style={{ padding: '16px', backgroundColor: 'white', borderRadius: '4px' }}>
+                                    <Title level={4} style={{ marginBottom: '16px' }}>{t('chatbot.prerequisiteDescription')}</Title>
+                                    <Space direction="vertical" size="middle" style={{ width: '100%', marginBottom: '16px' }}>
+                                        <Card size="small" style={{ borderLeft: '4px solid #1890ff' }}>
+                                            <Text strong>{t('chatbot.prerequisiteDocker')}</Text>
+                                        </Card>
+                                        <Card size="small" style={{ borderLeft: '4px solid #1890ff' }}>
+                                            <Text strong>{t('chatbot.prerequisiteOllama')}</Text>
+                                        </Card>
+                                    </Space>
+                                    <Alert
+                                        message={t('chatbot.prerequisiteWarning')}
+                                        type="warning"
+                                        showIcon
+                                        style={{ marginBottom: '0' }}
+                                    />
+                                </div>}
+
                         </Panel>
                     </Collapse>
 
