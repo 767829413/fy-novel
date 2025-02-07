@@ -132,6 +132,7 @@
     "prerequisiteDocker": "Docker installed",
     "prerequisiteOllama": "Ability to pull the ollama/ollama image",
     "prerequisiteWarning": "If you haven't met these conditions, please complete the relevant setup first.",
-    "checkingStatus": "Checking status..."
+    "checkingStatus": "Checking status...",
+    "deepseekApiKey": "DeepSeek API Key"
   }
 }

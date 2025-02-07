@@ -6,14 +6,18 @@ import (
 	"fy-novel/internal/config"
 	ollamaTool "fy-novel/internal/tools/ollama"
 	progressTool "fy-novel/internal/tools/progress"
+	"fy-novel/pkg/utils"
 
+	deepseek "github.com/cohesion-org/deepseek-go"
+	constants "github.com/cohesion-org/deepseek-go/constants"
 	"github.com/sirupsen/logrus"
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/ollama"
 )
 
 type FyChatbot struct {
-	log *logrus.Logger
+	log             *logrus.Logger
+	deepseekMessage []deepseek.ChatCompletionMessage
 }
 
 func NewFyChatbot(l *logrus.Logger) *FyChatbot {
@@ -91,4 +95,43 @@ func (f *FyChatbot) StartChatbot(ctx context.Context, userInput string) (string,
 	}
 
 	return completion, nil
+}
+
+func (f *FyChatbot) CreateChatCompletion(ctx context.Context, inputText, deepseekApiKey string) (string, error) {
+	// Set up the Deepseek client
+	client := deepseek.NewClient(deepseekApiKey)
+
+	if f.deepseekMessage == nil {
+		f.deepseekMessage = []deepseek.ChatCompletionMessage{
+			{Role: constants.ChatMessageRoleUser, Content: inputText},
+		}
+	} else {
+		f.deepseekMessage = append(
+			f.deepseekMessage,
+			deepseek.ChatCompletionMessage{
+				Role:    constants.ChatMessageRoleUser,
+				Content: inputText},
+		)
+	}
+
+	// Create a chat completion request
+	request := &deepseek.ChatCompletionRequest{
+		Model:    deepseek.DeepSeekChat,
+		Messages: f.deepseekMessage,
+	}
+
+	// Send the request and handle the response
+	response, err := client.CreateChatCompletion(ctx, request)
+	if err != nil {
+		return "", fmt.Errorf("deepseek CreateChatCompletion failed: %w", err)
+	} else {
+		f.deepseekMessage = append(
+			f.deepseekMessage,
+			deepseek.ChatCompletionMessage{
+				Role:    constants.ChatMessageRoleAssistant,
+				Content: response.Choices[0].Message.Content},
+		)
+	}
+	utils.PrintAsJSON(response.Choices[0].Message.Content)
+	return response.Choices[0].Message.Content, nil
 }

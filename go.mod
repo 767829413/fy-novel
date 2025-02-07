@@ -1,12 +1,13 @@
 module fy-novel
 
-go 1.23
+go 1.23.3
 
-toolchain go1.23.4
+toolchain go1.23.5
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/PuerkitoBio/goquery v1.10.0
+	github.com/cohesion-org/deepseek-go v1.1.0
 	github.com/docker/go-connections v0.5.0
 	github.com/go-resty/resty/v2 v2.16.2
 	github.com/go-shiori/go-epub v1.2.1

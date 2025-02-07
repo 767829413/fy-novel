@@ -179,3 +179,16 @@ func (a *App) GetSetOllamaModelProgress() *model.GetSetOllamaModelProgressResult
 	}
 	return res
 }
+
+func (a *App) DeepSeekChat(inputText, deepseekApiKey string) *model.StartChatbotResult {
+	res := &model.StartChatbotResult{}
+	resp, err := a.chatbot.CreateChatCompletion(a.ctx, inputText, deepseekApiKey)
+	if err != nil {
+		errMsg := fmt.Sprintf("app DeepSeekChat error: %v", err)
+		a.log.Error(errMsg)
+		res.ErrorMsg = errMsg
+		return res
+	}
+	res.Response = resp
+	return res
+}
