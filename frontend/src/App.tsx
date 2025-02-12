@@ -9,6 +9,7 @@ import CheckUpdate from './components/CheckUpdate';
 import ViewConfig from './components/ViewConfig';
 import UsageInfo from './components/UsageInfo';
 import Chatbot from './components/Chatbot';
+import FunnyToy from './components/FunnyToy';
 import LanguageSwitcher from './components/LanguageSwitcher';
 
 const { Header, Content, Footer } = Layout;
@@ -22,11 +23,12 @@ const App: React.FC = () => {
     const [selectedOption, setSelectedOption] = useState<number>(0);
 
     const options = [
-        { key: '0', label: t('app.menu.downloadNovel') },
-        { key: '1', label: t('app.menu.chatbot') },
-        { key: '2', label: t('app.menu.checkUpdate') },
-        { key: '3', label: t('app.menu.viewConfig') },
-        { key: '4', label: t('app.menu.usageInfo') },
+        { key: 0, label: t('app.menu.downloadNovel') },
+        { key: 1, label: t('app.menu.chatbot') },
+        { key: 2, label: t('app.menu.funnyToy') },
+        { key: 3, label: t('app.menu.checkUpdate') },
+        { key: 4, label: t('app.menu.viewConfig') },
+        { key: 5, label: t('app.menu.usageInfo') },
     ];
 
     const handleMenuClick = (e: any) => {
@@ -49,10 +51,12 @@ const App: React.FC = () => {
                     </ModelChangeProvider>
                 );
             case 2:
-                return <CheckUpdate />;
+                return <FunnyToy />;
             case 3:
-                return <ViewConfig />;
+                return <CheckUpdate />;
             case 4:
+                return <ViewConfig />;
+            case 5:
                 return <UsageInfo />;
             default:
                 return <p>{t('app.menu.selectOption')}</p>;

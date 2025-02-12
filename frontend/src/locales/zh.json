@@ -6,6 +6,7 @@
       "viewConfig": "查看配置文件",
       "usageInfo": "使用须知",
       "chatbot": "聊天机器人",
+      "funnyToy": "小玩意",
       "selectOption": "请选择一个选项"
     },
     "footer": "我是混子 ©{{year}} Created by 呵呵呵"
@@ -127,5 +128,8 @@
     "prerequisiteWarning": "如果您不符合这些条件，请先完成相关设置。",
     "checkingStatus": "检查状态...",
     "deepseekApiKey": "DeepSeek API Key"
+  },
+  "funny": {
+    "title": "趣味玩具"
   }
 }
