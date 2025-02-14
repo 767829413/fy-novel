@@ -130,6 +130,19 @@
     "deepseekApiKey": "DeepSeek API Key"
   },
   "funny": {
-    "title": "趣味玩具"
+    "title": "趣味玩具",
+    "imageTab": "Ascii字符画",
+    "imageSuccessfully": "图片处理成功",
+    "imageError": "图片处理失败",
+    "imageWhileError": "处理图片时出错:",
+    "imagePathInput": "请输入图片的完整路径",
+    "imageProcess": "处理图片",
+    "imageSubmitPath": "输入的图片路径",
+    "threshold": "图像灰度处理阈值（默认140）",
+    "filename": "输出文件路径（默认tmp.txt）",
+    "ascWidth": "ASCII最大宽度",
+    "ascHeight": "ASCII最大高度",
+    "useYukkuri": "使用Yukkuri风格（可能导致图像难以识别）",
+    "advancedSettings": "高级设置"
   }
 }

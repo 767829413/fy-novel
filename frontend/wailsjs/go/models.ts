@@ -59,6 +59,20 @@ export namespace model {
 	        this.TakeTime = source["TakeTime"];
 	    }
 	}
+	export class GenerateAsciiImageResult {
+	    Response: string;
+	    ErrorMsg: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new GenerateAsciiImageResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Response = source["Response"];
+	        this.ErrorMsg = source["ErrorMsg"];
+	    }
+	}
 	export class GetConfigResult {
 	    Config: config.Info;
 	
@@ -287,6 +301,30 @@ export namespace model {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Response = source["Response"];
 	        this.ErrorMsg = source["ErrorMsg"];
+	    }
+	}
+	export class YukkuriParams {
+	    ImgPath: string;
+	    Threshold: number;
+	    Filename: string;
+	    TmpImgName: string;
+	    AscWidth: number;
+	    AscHeight: number;
+	    Ykr: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new YukkuriParams(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ImgPath = source["ImgPath"];
+	        this.Threshold = source["Threshold"];
+	        this.Filename = source["Filename"];
+	        this.TmpImgName = source["TmpImgName"];
+	        this.AscWidth = source["AscWidth"];
+	        this.AscHeight = source["AscHeight"];
+	        this.Ykr = source["Ykr"];
 	    }
 	}
 

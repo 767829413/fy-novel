@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 
@@ -44,7 +45,7 @@ func (p *SearchResultParser) Parse(keyword string) ([]*model.SearchResult, error
 
 	firstPageResults, err := p.getSearchResults(
 		collector,
-		p.rule.Search.URL,
+		fmt.Sprintf(p.rule.Search.URL, keyword),
 		utils.BuildMethod(p.rule.Search.Method),
 		keyword,
 	)

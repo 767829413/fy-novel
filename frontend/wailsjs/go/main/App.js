@@ -10,6 +10,10 @@ export function DownLoadNovel(arg1) {
   return window['go']['main']['App']['DownLoadNovel'](arg1);
 }
 
+export function GenerateAsciiImage(arg1) {
+  return window['go']['main']['App']['GenerateAsciiImage'](arg1);
+}
+
 export function GetConfig() {
   return window['go']['main']['App']['GetConfig']();
 }

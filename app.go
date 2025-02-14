@@ -20,6 +20,7 @@ type App struct {
 	confHandler  *functions.ConfHandler
 	getHint      *functions.GetHint
 	chatbot      *functions.FyChatbot
+	funnyToy     *functions.FunnyToy
 }
 
 // NewApp creates a new App application struct
@@ -44,6 +45,7 @@ func (a *App) startup(ctx context.Context) {
 	a.confHandler = functions.NewGetConf(log)
 	a.getHint = functions.NewGetHint(log)
 	a.chatbot = functions.NewFyChatbot(log)
+	a.funnyToy = functions.NewFunnyToy(log)
 	a.log = log
 }
 
@@ -190,5 +192,12 @@ func (a *App) DeepSeekChat(inputText, deepseekApiKey string) *model.StartChatbot
 		return res
 	}
 	res.Response = resp
+	return res
+}
+
+func (a *App) GenerateAsciiImage(yukkuriParams model.YukkuriParams) *model.GenerateAsciiImageResult {
+	res := &model.GenerateAsciiImageResult{}
+	a.funnyToy.ConvertToAscii(a.ctx, yukkuriParams)
+	res.Response = ""
 	return res
 }
