@@ -15,6 +15,9 @@ const { Option } = Select;
 const { Panel } = Collapse;
 const { TabPane } = Tabs;
 
+const DEEPSEEK_TAB: string = 'deepseek';
+const OLLAMA_TAB: string = 'ollama';
+
 interface ChatMessage {
     role: 'user' | 'assistant';
     content: string;
@@ -26,7 +29,7 @@ const Chatbot: React.FC = () => {
     const [inputText, setInputText] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState('deepseek');
+    const [activeTab, setActiveTab] = useState(DEEPSEEK_TAB);
     const [deepseekApiKey, setDeepseekApiKey] = useState('');
     const [showDeepseekApiKey, setShowDeepseekApiKey] = useState(false);
 
@@ -71,7 +74,7 @@ const Chatbot: React.FC = () => {
 
     // 每次进入都要检查
     useEffect(() => {
-        if (activeTab === 'ollama') {
+        if (activeTab === OLLAMA_TAB) {
             checkCurrentStatus();
         }
     }, [checkCurrentStatus]);
@@ -91,7 +94,7 @@ const Chatbot: React.FC = () => {
     }, [isChangingModel, checkModelChangeProgress]);
 
     useEffect(() => {
-        if (activeTab === 'ollama') {
+        if (activeTab === OLLAMA_TAB) {
             getCurrentModel();
             getModelList();
         }
@@ -107,7 +110,7 @@ const Chatbot: React.FC = () => {
 
         try {
             let response;
-            if (activeTab === 'ollama') {
+            if (activeTab === OLLAMA_TAB) {
                 response = await StartChatbot(inputText);
                 if (response.ErrorMsg) {
                     throw new Error(response.ErrorMsg);
@@ -155,7 +158,7 @@ const Chatbot: React.FC = () => {
 
     const handleTabChange = (activeKey: string) => {
         setActiveTab(activeKey);
-        if (activeKey === 'ollama') {
+        if (activeKey === OLLAMA_TAB) {
             checkCurrentStatus();
             getCurrentModel();
             getModelList();
@@ -330,21 +333,21 @@ const Chatbot: React.FC = () => {
                     onChange={(e) => setInputText(e.target.value)}
                     onPressEnter={handleSendMessage}
                     placeholder={t('chatbot.inputPlaceholder')}
-                    disabled={activeTab === 'ollama' ? (!hasContainer || isInitializing || isLoading || isChangingModel) : false}
+                    disabled={activeTab === OLLAMA_TAB ? (!hasContainer || isInitializing || isLoading || isChangingModel) : false}
                 />
                 <Button
                     type="primary"
                     icon={<SendOutlined />}
                     onClick={handleSendMessage}
                     loading={isLoading}
-                    disabled={activeTab === 'ollama' ? (!hasContainer || isInitializing || isLoading || isChangingModel) : false}
+                    disabled={activeTab === OLLAMA_TAB ? (!hasContainer || isInitializing || isLoading || isChangingModel) : false}
                 >
                     {t('chatbot.send')}
                 </Button>
                 <Button
                     icon={<DeleteOutlined />}
                     onClick={handleClearChat}
-                    disabled={messages.length === 0 || (activeTab === 'ollama' && (!hasContainer || isInitializing || isLoading || isChangingModel))}
+                    disabled={messages.length === 0 || (activeTab === OLLAMA_TAB && (!hasContainer || isInitializing || isLoading || isChangingModel))}
                 >
                     {t('chatbot.clear')}
                 </Button>

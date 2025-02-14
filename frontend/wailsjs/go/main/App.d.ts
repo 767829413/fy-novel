@@ -6,6 +6,8 @@ export function DeepSeekChat(arg1:string,arg2:string):Promise<model.StartChatbot
 
 export function DownLoadNovel(arg1:model.SearchResult):Promise<model.CrawlResult>;
 
+export function GenerateAsciiImage(arg1:model.YukkuriParams):Promise<model.GenerateAsciiImageResult>;
+
 export function GetConfig():Promise<model.GetConfigResult>;
 
 export function GetCurrentUseModel():Promise<model.GetCurrentUseModelResult>;

@@ -72,3 +72,18 @@ type StartChatbotResult struct {
 	Response string
 	ErrorMsg string
 }
+
+type YukkuriParams struct {
+	ImgPath    string // specify an image file to transcode
+	Threshold  int    // set threshold for image grey processing (default 140)
+	Filename   string // set output file name
+	TmpImgName string // save temporary image
+	AscWidth   int    // set ascii max width
+	AscHeight  int    // set ascii max height
+	Ykr        bool   // true -> 使用AsciiYukkuri处理 ,false -> 使用Ascii
+}
+
+type GenerateAsciiImageResult struct {
+	Response string
+	ErrorMsg string
+}
