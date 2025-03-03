@@ -88,7 +88,7 @@ func (nc *novelCrawler) Crawl(res *model.SearchResult, start, end int) (*model.C
 			// Download logic
 			err := parse.NewChapterParser(conf).Parse(chapter, res, book, bookDir)
 			if err != nil {
-				fmt.Printf("parse.NewChapterParser(conf.Base.SourceID).Parse error: %v", err)
+				fmt.Printf("parse.NewChapterParser(conf).Parse error: %v", err)
 				return
 			}
 			chapterTool.CreateFileForChapter(chapter, bookDir)

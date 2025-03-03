@@ -3,6 +3,7 @@ package parse
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 
 	"fy-novel/internal/config"
@@ -42,10 +43,16 @@ func (p *SearchResultParser) Parse(keyword string) ([]*model.SearchResult, error
 		url := utils.NormalizeURL(href, p.rule.URL)
 		urls[url] = struct{}{}
 	})
+	var searchUrl string
+	if strings.Contains(p.rule.Search.URL, "%s") {
+		searchUrl = fmt.Sprintf(p.rule.Search.URL, keyword)
+	} else {
+		searchUrl = p.rule.Search.URL
+	}
 
 	firstPageResults, err := p.getSearchResults(
 		collector,
-		fmt.Sprintf(p.rule.Search.URL, keyword),
+		searchUrl,
 		utils.BuildMethod(p.rule.Search.Method),
 		keyword,
 	)
